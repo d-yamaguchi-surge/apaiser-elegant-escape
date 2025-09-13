@@ -8,7 +8,7 @@ const StoreInfo = () => {
       title: 'アクセス',
       content: [
         '〒602-8566',
-        '京都府京都市上京区烏丸通今出川上ル',
+        '栃木県宇都宮市花房烏丸通今出川上ル',
         '地下鉄烏丸線「今出川駅」徒歩3分'
       ]
     },
@@ -49,7 +49,7 @@ const StoreInfo = () => {
           </h2>
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            京都の静寂な空間で、心安らぐひとときを<br />
+            宇都宮の静寂な空間で、心安らぐひとときを<br />
             皆さまのお越しをお待ちしております
           </p>
         </div>
@@ -96,7 +96,7 @@ const StoreInfo = () => {
                       Google Mapを埋め込み予定
                     </p>
                     <p className="font-noto text-sm text-muted-foreground mt-2">
-                      京都市上京区烏丸通今出川上ル
+                      宇都宮市花房1-1
                     </p>
                   </div>
                 </div>
@@ -104,11 +104,11 @@ const StoreInfo = () => {
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center text-sm">
                     <div className="w-3 h-3 rounded-full bg-gold mr-3"></div>
-                    <span className="font-noto text-muted-foreground">地下鉄烏丸線「今出川駅」</span>
+                    <span className="font-noto text-muted-foreground">JR宇都宮</span>
                   </div>
                   <div className="flex items-center text-sm">
                     <div className="w-3 h-3 rounded-full bg-secondary mr-3"></div>
-                    <span className="font-noto text-muted-foreground">京都御所まで徒歩5分</span>
+                    <span className="font-noto text-muted-foreground">宇都宮駅まで徒歩1時間</span>
                   </div>
                 </div>
               </CardContent>
