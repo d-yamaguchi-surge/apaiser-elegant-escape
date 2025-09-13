@@ -1,8 +1,10 @@
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
+import News from '@/components/News';
+import BusinessCalendar from '@/components/BusinessCalendar';
 import Menu from '@/components/Menu';
 import StoreInfo from '@/components/StoreInfo';
-import Reservation from '@/components/Reservation';
+import ReservationCalendar from '@/components/ReservationCalendar';
 import Gallery from '@/components/Gallery';
 import Footer from '@/components/Footer';
 
@@ -12,9 +14,11 @@ const Index = () => {
       <Navigation />
       <main>
         <Hero />
+        <News />
+        <BusinessCalendar />
         <Menu />
         <StoreInfo />
-        <Reservation />
+        <ReservationCalendar />
         <Gallery />
       </main>
       <Footer />
