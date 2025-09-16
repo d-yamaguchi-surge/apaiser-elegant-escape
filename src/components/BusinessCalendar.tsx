@@ -31,7 +31,8 @@ const BusinessCalendar = () => {
   const modifiers = {
     business: (date: Date) => isBusinessDay(date),
     closed: (date: Date) => !isBusinessDay(date),
-    today: (date: Date) => isToday(date)
+    today: (date: Date) => isToday(date),
+    selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false
   };
 
   const modifiersStyles = {
@@ -46,6 +47,12 @@ const BusinessCalendar = () => {
     today: {
       backgroundColor: 'hsl(var(--gold))',
       color: 'white',
+      fontWeight: 'bold'
+    },
+    selected: {
+      backgroundColor: 'hsl(var(--gold) / 0.1)',
+      border: '2px solid hsl(var(--gold))',
+      color: 'hsl(var(--gold))',
       fontWeight: 'bold'
     }
   };

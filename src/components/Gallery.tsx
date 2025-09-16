@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import dish1 from '@/assets/dish-1.jpg';
 import dish2 from '@/assets/dish-2.jpg';
 import dish3 from '@/assets/dish-3.jpg';
@@ -49,30 +56,61 @@ const Gallery = () => {
           </p>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {galleryImages.map((image) => (
-            <div
-              key={image.id}
-              className="group relative overflow-hidden cursor-pointer shadow-elegant hover:shadow-gold transition-smooth"
-              onClick={() => setSelectedImage(image.src)}
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-64 object-cover group-hover:scale-110 transition-smooth"
-              />
-              <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-smooth"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-primary/80 to-transparent">
-                <span className="bg-gold text-primary px-2 py-1 text-xs font-noto font-medium rounded">
-                  {image.category}
-                </span>
-                <p className="text-background text-sm font-noto mt-2">
-                  {image.alt}
-                </p>
-              </div>
-            </div>
-          ))}
+        {/* Gallery Carousel */}
+        <div className="relative max-w-5xl mx-auto">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {galleryImages.map((image) => (
+                <CarouselItem key={image.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <div
+                    className="group relative overflow-hidden cursor-pointer shadow-elegant hover:shadow-gold transition-smooth rounded-lg"
+                    onClick={() => setSelectedImage(image.src)}
+                  >
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-80 object-cover group-hover:scale-110 transition-smooth"
+                    />
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-smooth"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-primary/80 to-transparent rounded-b-lg">
+                      <span className="bg-gold text-primary px-2 py-1 text-xs font-noto font-medium rounded">
+                        {image.category}
+                      </span>
+                      <p className="text-background text-sm font-noto mt-2">
+                        {image.alt}
+                      </p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4 bg-background/80 border-gold/20 hover:bg-gold hover:text-background" />
+            <CarouselNext className="right-4 bg-background/80 border-gold/20 hover:bg-gold hover:text-background" />
+          </Carousel>
+
+          {/* Thumbnail Navigation for Desktop */}
+          <div className="hidden md:flex justify-center mt-8 space-x-4">
+            {galleryImages.map((image, index) => (
+              <button
+                key={image.id}
+                onClick={() => setSelectedImage(image.src)}
+                className="group relative w-20 h-16 rounded-lg overflow-hidden border-2 border-gold/20 hover:border-gold transition-smooth"
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
+                />
+                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-smooth"></div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Lightbox Modal */}
