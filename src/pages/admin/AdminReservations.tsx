@@ -3,11 +3,13 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { PageHeader } from '@/components/common/PageHeader';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { ReservationFilters } from '@/components/admin/ReservationFilters';
+import { AddReservationDialog } from '@/components/admin/AddReservationDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useReservations, Reservation } from '@/modules/reservation/hooks/useReservations';
+import { useReservations, Reservation, ReservationFilters as FilterType } from '@/modules/reservation/hooks/useReservations';
 import { Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
 
 const statusConfig = {
@@ -17,8 +19,17 @@ const statusConfig = {
 };
 
 export default function AdminReservations() {
-  const { reservations, loading, updateReservationStatus, deleteReservation } = useReservations();
+  const [filters, setFilters] = useState<FilterType>({});
+  const { reservations, loading, updateReservationStatus, deleteReservation, refetch } = useReservations(filters);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const handleFiltersChange = (newFilters: FilterType) => {
+    setFilters(newFilters);
+  };
+
+  const handleReservationAdded = () => {
+    refetch();
+  };
 
   const handleStatusChange = async (id: string, status: 'pending' | 'approved' | 'cancelled') => {
     await updateReservationStatus(id, status);
@@ -49,9 +60,19 @@ export default function AdminReservations() {
 
   return (
     <AdminLayout>
-      <PageHeader title="予約管理" description="レストランの予約を管理" />
+      <PageHeader 
+        title="予約管理" 
+        description="レストランの予約を管理"
+      >
+        <AddReservationDialog onReservationAdded={handleReservationAdded} />
+      </PageHeader>
       
-      <div className="grid gap-4">
+      <ReservationFilters 
+        onFiltersChange={handleFiltersChange}
+        currentFilters={filters}
+      />
+      
+      <div className="grid gap-4 mt-6">
         {reservations.map((reservation) => {
           const status = statusConfig[reservation.status];
           const StatusIcon = status.icon;

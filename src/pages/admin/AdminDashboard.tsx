@@ -1,51 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
-import { Newspaper, Calendar, Image } from 'lucide-react';
-
-interface DashboardStats {
-  newsCount: number;
-  reservationsCount: number;
-  pendingReservationsCount: number;
-  galleryImagesCount: number;
-}
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useReservations } from '@/modules/reservation/hooks/useReservations';
+import { generateTodayReservationsPDF } from '@/lib/pdfGenerator';
+import { Calendar, Clock, Users, AlertCircle, FileDown } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    newsCount: 0,
-    reservationsCount: 0,
-    pendingReservationsCount: 0,
-    galleryImagesCount: 0,
-  });
-  const [loading, setLoading] = useState(true);
+  const { stats, loading, fetchStatsOnly, getTodayApprovedReservations } = useReservations();
+  const todayReservations = getTodayApprovedReservations();
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [newsResult, reservationsResult, pendingResult, galleryResult] = await Promise.all([
-          supabase.from('news').select('id', { count: 'exact', head: true }),
-          supabase.from('reservations').select('id', { count: 'exact', head: true }),
-          supabase.from('reservations').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-          supabase.from('gallery_images').select('id', { count: 'exact', head: true }),
-        ]);
-
-        setStats({
-          newsCount: newsResult.count || 0,
-          reservationsCount: reservationsResult.count || 0,
-          pendingReservationsCount: pendingResult.count || 0,
-          galleryImagesCount: galleryResult.count || 0,
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+    fetchStatsOnly();
   }, []);
+
+  const handleExportPDF = () => {
+    generateTodayReservationsPDF(todayReservations);
+  };
+
+  const formatTime = (timeString: string) => {
+    return timeString.slice(0, 5); // HH:MM format
+  };
 
   if (loading) {
     return (
@@ -74,56 +52,105 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">お知らせ</CardTitle>
-            <Newspaper className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">本日の予約数</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.newsCount}</div>
+            <div className="text-2xl font-bold">{stats.todayCount}</div>
             <p className="text-xs text-muted-foreground">
-              投稿済みのお知らせ
+              本日の予約
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">総予約数</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">今週の予約数</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.reservationsCount}</div>
+            <div className="text-2xl font-bold">{stats.thisWeekCount}</div>
             <p className="text-xs text-muted-foreground">
-              全ての予約
+              今週の予約
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">未承認予約</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">今月の予約数</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingReservationsCount}</div>
+            <div className="text-2xl font-bold">{stats.thisMonthCount}</div>
+            <p className="text-xs text-muted-foreground">
+              今月の予約
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">未承認予約数</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pendingCount}</div>
             <p className="text-xs text-muted-foreground">
               承認待ちの予約
             </p>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">ギャラリー画像</CardTitle>
-            <Image className="h-4 w-4 text-muted-foreground" />
+      </div>
+
+      {/* Today's Approved Reservations */}
+      {todayReservations.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>本日の承認済み予約一覧</CardTitle>
+              <Button onClick={handleExportPDF} variant="outline" size="sm">
+                <FileDown className="w-4 h-4 mr-2" />
+                PDF出力
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.galleryImagesCount}</div>
-            <p className="text-xs text-muted-foreground">
-              アップロード済み画像
-            </p>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>氏名</TableHead>
+                  <TableHead>人数</TableHead>
+                  <TableHead>時間</TableHead>
+                  <TableHead>電話</TableHead>
+                  <TableHead>メール</TableHead>
+                  <TableHead>備考</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {todayReservations.map((reservation) => (
+                  <TableRow key={reservation.id}>
+                    <TableCell className="font-medium">{reservation.customer_name}</TableCell>
+                    <TableCell>{reservation.party_size}名</TableCell>
+                    <TableCell>{formatTime(reservation.reservation_time)}</TableCell>
+                    <TableCell>{reservation.customer_phone || '-'}</TableCell>
+                    <TableCell>{reservation.customer_email}</TableCell>
+                    <TableCell>{reservation.special_requests || '-'}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      </div>
+      )}
+
+      {todayReservations.length === 0 && (
+        <Card className="mt-8">
+          <CardContent className="py-8 text-center">
+            <p className="text-muted-foreground">本日の承認済み予約はありません。</p>
+          </CardContent>
+        </Card>
+      )}
     </AdminLayout>
   );
 }
