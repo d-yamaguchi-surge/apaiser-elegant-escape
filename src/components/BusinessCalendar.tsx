@@ -54,30 +54,18 @@ const BusinessCalendar = () => {
   };
 
   const modifiers = {
-    business: (date: Date) => isBusinessDaySync(date),
     closed: (date: Date) => !isBusinessDaySync(date),
-    today: (date: Date) => isToday(date),
     selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false
   };
 
   const modifiersStyles = {
-    business: {
-      backgroundColor: 'hsl(var(--gold) / 0.1)',
-      border: '1px solid hsl(var(--gold) / 0.5)',
-      color: 'hsl(var(--foreground))',
-    },
     closed: {
       color: 'hsl(var(--muted-foreground))',
       textDecoration: 'line-through',
       backgroundColor: 'hsl(var(--muted))'
     },
-    today: {
-      backgroundColor: 'hsl(142, 76%, 36%)', // 緑背景
-      color: 'white',
-      fontWeight: 'bold'
-    },
     selected: {
-      backgroundColor: 'hsl(var(--gold))', // 濃いオレンジ背景
+      backgroundColor: 'hsl(var(--gold))',
       color: 'white',
       fontWeight: 'bold'
     }
@@ -152,16 +140,8 @@ const BusinessCalendar = () => {
               <CardContent>
                 <div className="space-y-3 text-sm font-noto">
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-green-600 rounded"></div>
-                    <span>本日</span>
-                  </div>
-                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-gold rounded"></div>
                     <span>選択中の日付</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-gold/10 border border-gold/50 rounded"></div>
-                    <span>営業日</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-muted rounded"></div>

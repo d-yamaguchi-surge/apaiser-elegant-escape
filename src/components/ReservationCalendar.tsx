@@ -97,39 +97,19 @@ const ReservationCalendar = () => {
   };
 
   const modifiers = {
-    available: (date: Date) => isAvailableForReservation(date),
     unavailable: (date: Date) => !isAvailableForReservation(date),
-    blocked: (date: Date) => isDateBlocked(date),
-    selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false,
-    today: (date: Date) => isToday(date)
+    selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false
   };
 
   const modifiersStyles = {
-    available: {
-      backgroundColor: 'hsl(var(--gold) / 0.1)',
-      color: 'hsl(var(--foreground))',
-      border: '1px solid hsl(var(--gold) / 0.5)',
-    },
     unavailable: {
       color: 'hsl(var(--muted-foreground))',
       backgroundColor: 'hsl(var(--muted))',
       textDecoration: 'line-through',
       cursor: 'not-allowed'
     },
-    blocked: {
-      color: 'hsl(var(--destructive-foreground))',
-      backgroundColor: 'hsl(var(--destructive) / 0.1)',
-      border: '1px solid hsl(var(--destructive))',
-      textDecoration: 'line-through',
-      cursor: 'not-allowed'
-    },
     selected: {
-      backgroundColor: 'hsl(var(--gold))', // 濃いオレンジ背景
-      color: 'white',
-      fontWeight: 'bold'
-    },
-    today: {
-      backgroundColor: 'hsl(142, 76%, 36%)', // 緑背景
+      backgroundColor: 'hsl(var(--gold))',
       color: 'white',
       fontWeight: 'bold'
     }
@@ -213,34 +193,17 @@ const ReservationCalendar = () => {
             <Card className="border-gold/20 shadow-elegant bg-card">
               <CardContent className="p-6">
                 <h3 className="font-noto text-lg font-bold text-foreground mb-4 text-center">
-                  予約可能日について
+                  カレンダーの見方
                 </h3>
                 <div className="space-y-3 text-sm text-muted-foreground font-noto">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-green-600 rounded"></div>
-                    <span>本日</span>
-                  </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-gold rounded"></div>
                     <span>選択中の日付</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-gold/10 border border-gold/50 rounded"></div>
-                    <span>予約可能日</span>
-                  </div>
-                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-muted rounded"></div>
-                    <span>予約不可（休業日・過去の日付）</span>
+                    <span>予約不可</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-destructive/10 border border-destructive rounded"></div>
-                    <span>予約不可日（管理者設定）</span>
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gold/20 space-y-2 text-xs text-muted-foreground">
-                  <p>• 当日のご予約はお電話にてお願いいたします</p>
-                  <p>• 定休日・期間休業・予約不可日は選択できません</p>
-                  <p>• 赤枠の日付は管理者により予約不可に設定されています</p>
                 </div>
               </CardContent>
             </Card>
