@@ -142,6 +142,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_reservation_availability: {
+        Args: { check_date: string }
+        Returns: {
+          reservation_count: number
+          reservation_date: string
+        }[]
+      }
+      get_reservation_counts_by_date: {
+        Args: { end_date: string; start_date: string }
+        Returns: {
+          reservation_count: number
+          reservation_date: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

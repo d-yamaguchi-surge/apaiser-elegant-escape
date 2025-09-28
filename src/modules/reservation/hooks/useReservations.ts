@@ -19,6 +19,7 @@ export interface Reservation {
 export const useReservations = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reservationCounts, setReservationCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
 
   const fetchReservations = async () => {
@@ -40,6 +41,31 @@ export const useReservations = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch availability data for calendar (public access via secure function)
+  const fetchAvailabilityData = async (startDate: string, endDate: string) => {
+    try {
+      const { data, error } = await supabase.rpc('get_reservation_counts_by_date', {
+        start_date: startDate,
+        end_date: endDate
+      });
+
+      if (error) throw error;
+      
+      // Convert array to object for easier lookup
+      const counts: Record<string, number> = {};
+      if (data) {
+        data.forEach((item: { reservation_date: string; reservation_count: number }) => {
+          counts[item.reservation_date] = item.reservation_count;
+        });
+      }
+      setReservationCounts(counts);
+      return counts;
+    } catch (error) {
+      console.error('Error fetching availability data:', error);
+      return {};
     }
   };
 
@@ -98,8 +124,10 @@ export const useReservations = () => {
   return {
     reservations,
     loading,
+    reservationCounts,
     updateReservationStatus,
     deleteReservation,
     refetch: fetchReservations,
+    fetchAvailabilityData,
   };
 };

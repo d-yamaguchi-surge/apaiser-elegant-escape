@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import React from 'react';
 import { format, isToday, getDay, isBefore, startOfDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +11,18 @@ import { useReservations } from '@/modules/reservation/hooks/useReservations';
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const navigate = useNavigate();
-  const { reservations } = useReservations();
+  const { reservationCounts, fetchAvailabilityData } = useReservations();
+
+  // Load availability data when component mounts
+  React.useEffect(() => {
+    const today = new Date();
+    const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
+    
+    fetchAvailabilityData(
+      format(today, 'yyyy-MM-dd'),
+      format(twoMonthsLater, 'yyyy-MM-dd')
+    );
+  }, [fetchAvailabilityData]);
 
   // Check if a date is available for reservation
   const isAvailableForReservation = (date: Date) => {
@@ -22,14 +34,12 @@ const ReservationCalendar = () => {
       return false;
     }
     
-    // Check if date has too many reservations (assuming max 10 per day)
+    // Check if date has too many reservations (max 8 per day)
     const dateString = format(date, 'yyyy-MM-dd');
-    const dayReservations = reservations.filter(
-      reservation => reservation.reservation_date === dateString && reservation.status !== 'cancelled'
-    );
+    const reservationCount = reservationCounts[dateString] || 0;
     
-    // If more than 8 reservations, consider it full
-    if (dayReservations.length >= 8) {
+    // If 8 or more reservations, consider it full
+    if (reservationCount >= 8) {
       return false;
     }
     
