@@ -7,11 +7,13 @@ import { format, isToday, getDay, isBefore, startOfDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { useReservations } from '@/modules/reservation/hooks/useReservations';
+import { useBlockedDates } from '@/modules/blockedDates/hooks/useBlockedDates';
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const navigate = useNavigate();
   const { reservationCounts, fetchAvailabilityData } = useReservations();
+  const { blockedDates } = useBlockedDates();
 
   // Load availability data when component mounts
   React.useEffect(() => {
@@ -24,6 +26,19 @@ const ReservationCalendar = () => {
     );
   }, [fetchAvailabilityData]);
 
+  // Check if a date is blocked by admin
+  const isDateBlocked = (date: Date) => {
+    const dateString = format(date, 'yyyy-MM-dd');
+    return blockedDates.some(bd => bd.blocked_date === dateString);
+  };
+
+  // Get blocked date reason
+  const getBlockedReason = (date: Date) => {
+    const dateString = format(date, 'yyyy-MM-dd');
+    const blockedDate = blockedDates.find(bd => bd.blocked_date === dateString);
+    return blockedDate?.reason;
+  };
+
   // Check if a date is available for reservation
   const isAvailableForReservation = (date: Date) => {
     const day = getDay(date);
@@ -31,6 +46,11 @@ const ReservationCalendar = () => {
     
     // Not available if it's Tuesday (closed day) or in the past
     if (day === 2 || isBefore(date, today)) {
+      return false;
+    }
+
+    // Not available if blocked by admin
+    if (isDateBlocked(date)) {
       return false;
     }
     
@@ -61,6 +81,7 @@ const ReservationCalendar = () => {
   const modifiers = {
     available: (date: Date) => isAvailableForReservation(date),
     unavailable: (date: Date) => !isAvailableForReservation(date),
+    blocked: (date: Date) => isDateBlocked(date),
     selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false,
     today: (date: Date) => isToday(date)
   };
@@ -74,6 +95,13 @@ const ReservationCalendar = () => {
     unavailable: {
       color: 'hsl(var(--muted-foreground))',
       backgroundColor: 'hsl(var(--muted))',
+      textDecoration: 'line-through',
+      cursor: 'not-allowed'
+    },
+    blocked: {
+      color: 'hsl(var(--destructive-foreground))',
+      backgroundColor: 'hsl(var(--destructive) / 0.1)',
+      border: '1px solid hsl(var(--destructive))',
       textDecoration: 'line-through',
       cursor: 'not-allowed'
     },
@@ -181,10 +209,15 @@ const ReservationCalendar = () => {
                     <div className="w-4 h-4 bg-muted rounded"></div>
                     <span>予約不可（火曜定休・過去の日付）</span>
                   </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-destructive/10 border border-destructive rounded"></div>
+                    <span>予約不可日（管理者設定）</span>
+                  </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-gold/20 space-y-2 text-xs text-muted-foreground">
                   <p>• 当日のご予約はお電話にてお願いいたします</p>
                   <p>• 火曜日は定休日のため予約できません</p>
+                  <p>• 赤枠の日付は管理者により予約不可に設定されています</p>
                 </div>
               </CardContent>
             </Card>

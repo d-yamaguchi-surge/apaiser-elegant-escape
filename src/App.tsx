@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminGallery from "./pages/admin/AdminGallery";
+import AdminBlockedDates from "./pages/admin/AdminBlockedDates";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,11 @@ const App = () => (
             <Route path="/admin/gallery" element={
               <ProtectedRoute>
                 <AdminGallery />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/blocked-dates" element={
+              <ProtectedRoute>
+                <AdminBlockedDates />
               </ProtectedRoute>
             } />
             
