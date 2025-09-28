@@ -1,22 +1,38 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
-import React from 'react';
-import { format, isToday, getDay, isBefore, startOfDay, addDays } from 'date-fns';
-import { ja } from 'date-fns/locale';
-import { useNavigate } from 'react-router-dom';
-import { useReservations } from '@/modules/reservation/hooks/useReservations';
-import { useBlockedDates } from '@/modules/blockedDates/hooks/useBlockedDates';
-import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import React from "react";
+import {
+  format,
+  isToday,
+  getDay,
+  isBefore,
+  startOfDay,
+  addDays,
+} from "date-fns";
+import { ja } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import { useReservations } from "@/modules/reservation/hooks/useReservations";
+import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
+import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
-  const { reservationCounts, loading: reservationLoading, fetchAvailabilityData } = useReservations();
+  const {
+    reservationCounts,
+    loading: reservationLoading,
+    fetchAvailabilityData,
+  } = useReservations();
   const { blockedDates, loading: blockedLoading } = useBlockedDates();
-  const { recurringClosedDays, periodClosures, loading: businessLoading, isReservationAvailable } = useBusinessDays();
+  const {
+    recurringClosedDays,
+    periodClosures,
+    loading: businessLoading,
+    isReservationAvailable,
+  } = useBusinessDays();
 
   const loading = reservationLoading || blockedLoading || businessLoading;
 
@@ -24,27 +40,37 @@ const ReservationCalendar = () => {
   useEffect(() => {
     const loadAvailabilityData = async () => {
       if (loading) return;
-      
+
       const today = new Date();
-      const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
-      
+      const twoMonthsLater = new Date(
+        today.getFullYear(),
+        today.getMonth() + 2,
+        today.getDate()
+      );
+
       // Fetch reservation data first
       await fetchAvailabilityData(
-        format(today, 'yyyy-MM-dd'),
-        format(twoMonthsLater, 'yyyy-MM-dd')
+        format(today, "yyyy-MM-dd"),
+        format(twoMonthsLater, "yyyy-MM-dd")
       );
 
       // Check availability for each date in the next 2 months
       const available = new Set<string>();
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 90; i++) {
         const checkDate = addDays(today, i);
         try {
           const isAvailable = await isReservationAvailable(checkDate);
           if (isAvailable) {
-            available.add(format(checkDate, 'yyyy-MM-dd'));
+            available.add(format(checkDate, "yyyy-MM-dd"));
           }
         } catch (error) {
-          console.error(`Error checking availability for ${format(checkDate, 'yyyy-MM-dd')}:`, error);
+          console.error(
+            `Error checking availability for ${format(
+              checkDate,
+              "yyyy-MM-dd"
+            )}:`,
+            error
+          );
         }
       }
       setAvailableDates(available);
@@ -55,28 +81,30 @@ const ReservationCalendar = () => {
 
   // Check if a date is blocked by admin
   const isDateBlocked = (date: Date) => {
-    const dateString = format(date, 'yyyy-MM-dd');
-    return blockedDates.some(bd => bd.blocked_date === dateString);
+    const dateString = format(date, "yyyy-MM-dd");
+    return blockedDates.some((bd) => bd.blocked_date === dateString);
   };
 
   // Get blocked date reason
   const getBlockedReason = (date: Date) => {
-    const dateString = format(date, 'yyyy-MM-dd');
-    const blockedDate = blockedDates.find(bd => bd.blocked_date === dateString);
+    const dateString = format(date, "yyyy-MM-dd");
+    const blockedDate = blockedDates.find(
+      (bd) => bd.blocked_date === dateString
+    );
     return blockedDate?.reason;
   };
 
   // Check if a date is available for reservation (sync version)
   const isAvailableForReservation = (date: Date) => {
     const today = startOfDay(new Date());
-    
+
     // Not available if in the past
     if (isBefore(date, today)) {
       return false;
     }
-    
+
     // Check if date is in the available dates set
-    const dateString = format(date, 'yyyy-MM-dd');
+    const dateString = format(date, "yyyy-MM-dd");
     return availableDates.has(dateString);
   };
 
@@ -92,40 +120,48 @@ const ReservationCalendar = () => {
 
   const handleReservation = () => {
     if (selectedDate) {
-      navigate(`/reservation?date=${format(selectedDate, 'yyyy-MM-dd')}`);
+      navigate(`/reservation?date=${format(selectedDate, "yyyy-MM-dd")}`);
+      window.scrollTo(0, 0);
     }
   };
 
   const modifiers = {
     unavailable: (date: Date) => !isAvailableForReservation(date),
-    selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false
+    selected: (date: Date) =>
+      selectedDate
+        ? format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+        : false,
   };
 
   const modifiersStyles = {
     unavailable: {
-      color: 'hsl(var(--muted-foreground))',
-      backgroundColor: 'hsl(var(--muted))',
-      textDecoration: 'line-through',
-      cursor: 'not-allowed'
+      color: "hsl(var(--muted-foreground))",
+      backgroundColor: "hsl(var(--muted))",
+      textDecoration: "line-through",
+      cursor: "not-allowed",
     },
     selected: {
-      backgroundColor: 'hsl(var(--gold))',
-      color: 'white',
-      fontWeight: 'bold'
-    }
+      backgroundColor: "hsl(var(--gold))",
+      color: "white",
+      fontWeight: "bold",
+    },
   };
 
   return (
-    <section id="reservation" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section
+      id="reservation"
+      className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30"
+    >
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-6">
             Reservation
           </h2>
-          
+
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            特別な時間をお過ごしいただくため<br />
+            特別な時間をお過ごしいただくため
+            <br />
             事前のご予約をおすすめしております
           </p>
         </div>
@@ -149,7 +185,9 @@ const ReservationCalendar = () => {
                 className="rounded-md border-gold/20"
                 disabled={(date) => !isAvailableForReservation(date)}
                 fromDate={new Date()}
-                toDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                toDate={
+                  new Date(new Date().setMonth(new Date().getMonth() + 3))
+                }
               />
             </CardContent>
           </Card>
@@ -166,16 +204,21 @@ const ReservationCalendar = () => {
                 {selectedDate ? (
                   <>
                     <p className="font-playfair text-2xl font-bold text-gold mb-4">
-                      {format(selectedDate, 'yyyy年M月d日 (EEEE)', { locale: ja })}
+                      {format(selectedDate, "yyyy年M月d日 (EEEE)", {
+                        locale: ja,
+                      })}
                     </p>
                     <div className="space-y-2 mb-6">
-                      <p className="font-noto text-sm text-muted-foreground">営業時間</p>
+                      <p className="font-noto text-sm text-muted-foreground">
+                        営業時間
+                      </p>
                       <p className="font-noto text-foreground">
-                        ランチ 11:30-15:00<br />
+                        ランチ 11:30-15:00
+                        <br />
                         ディナー 17:30-22:00
                       </p>
                     </div>
-                    <Button 
+                    <Button
                       onClick={handleReservation}
                       variant="gold"
                       className="w-full py-3"
