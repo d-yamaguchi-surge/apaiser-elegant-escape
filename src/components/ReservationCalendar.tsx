@@ -5,10 +5,12 @@ import { useState } from 'react';
 import { format, isToday, getDay, isBefore, startOfDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
+import { useReservations } from '@/modules/reservation/hooks/useReservations';
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const navigate = useNavigate();
+  const { reservations } = useReservations();
 
   // Check if a date is available for reservation
   const isAvailableForReservation = (date: Date) => {
@@ -17,6 +19,17 @@ const ReservationCalendar = () => {
     
     // Not available if it's Tuesday (closed day) or in the past
     if (day === 2 || isBefore(date, today)) {
+      return false;
+    }
+    
+    // Check if date has too many reservations (assuming max 10 per day)
+    const dateString = format(date, 'yyyy-MM-dd');
+    const dayReservations = reservations.filter(
+      reservation => reservation.reservation_date === dateString && reservation.status !== 'cancelled'
+    );
+    
+    // If more than 8 reservations, consider it full
+    if (dayReservations.length >= 8) {
       return false;
     }
     

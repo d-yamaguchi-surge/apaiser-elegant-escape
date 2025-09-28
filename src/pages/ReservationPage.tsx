@@ -9,15 +9,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
 
 const ReservationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const selectedDateParam = searchParams.get('date');
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    time: '',
+    guests: '',
+    requests: ''
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -26,19 +37,63 @@ const ReservationPage = () => {
     }
   }, [selectedDateParam]);
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "ご予約ありがとうございます",
-      description: "お送りいただいた内容を確認の上、改めてご連絡いたします。",
-    });
-    
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from('reservations')
+        .insert([{
+          customer_name: `${formData.lastName} ${formData.firstName}`,
+          customer_email: formData.email,
+          customer_phone: formData.phone,
+          reservation_date: selectedDate,
+          reservation_time: formData.time,
+          party_size: parseInt(formData.guests),
+          special_requests: formData.requests || null,
+          status: 'pending'
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "ご予約ありがとうございます",
+        description: "お送りいただいた内容を確認の上、改めてご連絡いたします。",
+      });
+
+      // Reset form and navigate to home
+      setFormData({
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        time: '',
+        guests: '',
+        requests: ''
+      });
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      toast({
+        title: "エラー",
+        description: "予約の送信に失敗しました。もう一度お試しください。",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatDisplayDate = (dateString: string) => {
@@ -105,6 +160,8 @@ const ReservationPage = () => {
                     </Label>
                     <Input 
                       id="lastName" 
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
                       required 
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
@@ -115,6 +172,8 @@ const ReservationPage = () => {
                     </Label>
                     <Input 
                       id="firstName" 
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
                       required 
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
@@ -128,6 +187,8 @@ const ReservationPage = () => {
                   <Input 
                     id="phone" 
                     type="tel" 
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
                     required 
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
@@ -140,6 +201,8 @@ const ReservationPage = () => {
                   <Input 
                     id="email" 
                     type="email" 
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                     required 
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
@@ -163,7 +226,11 @@ const ReservationPage = () => {
                     <Label htmlFor="time" className="font-noto text-sm font-medium">
                       ご希望時間*
                     </Label>
-                    <Select required>
+                    <Select 
+                      value={formData.time}
+                      onValueChange={(value) => handleInputChange('time', value)}
+                      required
+                    >
                       <SelectTrigger className="border-gold/30 focus:border-gold transition-smooth">
                         <SelectValue placeholder="時間を選択" />
                       </SelectTrigger>
@@ -186,7 +253,11 @@ const ReservationPage = () => {
                   <Label htmlFor="guests" className="font-noto text-sm font-medium">
                     人数*
                   </Label>
-                  <Select required>
+                  <Select 
+                    value={formData.guests}
+                    onValueChange={(value) => handleInputChange('guests', value)}
+                    required
+                  >
                     <SelectTrigger className="border-gold/30 focus:border-gold transition-smooth">
                       <SelectValue placeholder="人数を選択" />
                     </SelectTrigger>
@@ -207,6 +278,8 @@ const ReservationPage = () => {
                   </Label>
                   <Textarea 
                     id="requests"
+                    value={formData.requests}
+                    onChange={(e) => handleInputChange('requests', e.target.value)}
                     placeholder="お誕生日のお祝い、アレルギー情報など、ご要望がございましたらお書きください"
                     className="border-gold/30 focus:border-gold transition-smooth resize-none h-24"
                   />
