@@ -1,22 +1,47 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { useState } from 'react';
-import { format, isToday, getDay } from 'date-fns';
+import { useState, useEffect } from 'react';
+import { format, isToday, getDay, addDays, startOfDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
 
 const BusinessCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [businessDays, setBusinessDays] = useState<Set<string>>(new Set());
+  const { loading, isBusinessDay: checkBusinessDay } = useBusinessDays();
 
-  // Check if a date is a business day (closed on Tuesdays - day 2)
-  const isBusinessDay = (date: Date) => {
-    const day = getDay(date);
-    return day !== 2; // Tuesday is 2
+  // Load business day data
+  useEffect(() => {
+    const loadBusinessDays = async () => {
+      if (loading) return;
+      
+      const today = new Date();
+      const businessDaySet = new Set<string>();
+      
+      // Check next 3 months
+      for (let i = 0; i < 90; i++) {
+        const checkDate = addDays(today, i);
+        const isOpen = await checkBusinessDay(checkDate);
+        if (isOpen) {
+          businessDaySet.add(format(checkDate, 'yyyy-MM-dd'));
+        }
+      }
+      setBusinessDays(businessDaySet);
+    };
+
+    loadBusinessDays();
+  }, [checkBusinessDay, loading]);
+
+  // Check if a date is a business day
+  const isBusinessDaySync = (date: Date) => {
+    const dateString = format(date, 'yyyy-MM-dd');
+    return businessDays.has(dateString);
   };
 
   const getBusinessHours = (date: Date | undefined) => {
     if (!date) return '';
     
-    if (!isBusinessDay(date)) {
+    if (!isBusinessDaySync(date)) {
       return '休業日';
     }
     
@@ -29,14 +54,16 @@ const BusinessCalendar = () => {
   };
 
   const modifiers = {
-    business: (date: Date) => isBusinessDay(date),
-    closed: (date: Date) => !isBusinessDay(date),
+    business: (date: Date) => isBusinessDaySync(date),
+    closed: (date: Date) => !isBusinessDaySync(date),
     today: (date: Date) => isToday(date),
     selected: (date: Date) => selectedDate ? format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') : false
   };
 
   const modifiersStyles = {
     business: {
+      backgroundColor: 'hsl(var(--gold) / 0.1)',
+      border: '1px solid hsl(var(--gold) / 0.5)',
       color: 'hsl(var(--foreground))',
     },
     closed: {
@@ -45,14 +72,13 @@ const BusinessCalendar = () => {
       backgroundColor: 'hsl(var(--muted))'
     },
     today: {
-      backgroundColor: 'hsl(var(--gold))',
+      backgroundColor: 'hsl(142, 76%, 36%)', // 緑背景
       color: 'white',
       fontWeight: 'bold'
     },
     selected: {
-      backgroundColor: 'hsl(var(--gold) / 0.1)',
-      border: '2px solid hsl(var(--gold))',
-      color: 'hsl(var(--gold))',
+      backgroundColor: 'hsl(var(--gold))', // 濃いオレンジ背景
+      color: 'white',
       fontWeight: 'bold'
     }
   };
@@ -126,22 +152,21 @@ const BusinessCalendar = () => {
               <CardContent>
                 <div className="space-y-3 text-sm font-noto">
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-gold rounded"></div>
+                    <div className="w-4 h-4 bg-green-600 rounded"></div>
                     <span>本日</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-muted rounded"></div>
-                    <span>休業日（火曜日）</span>
+                    <div className="w-4 h-4 bg-gold rounded"></div>
+                    <span>選択中の日付</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border border-gold rounded"></div>
+                    <div className="w-4 h-4 bg-gold/10 border border-gold/50 rounded"></div>
                     <span>営業日</span>
                   </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gold/20">
-                  <p className="text-xs text-muted-foreground">
-                    ※祝日や特別休業日は別途お知らせいたします
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-muted rounded"></div>
+                    <span>休業日</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

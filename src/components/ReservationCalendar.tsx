@@ -20,13 +20,15 @@ const ReservationCalendar = () => {
 
   const loading = reservationLoading || blockedLoading || businessLoading;
 
-  // Load availability data and check dates when component mounts or data changes
+  // Load availability data when component mounts or data changes
   useEffect(() => {
     const loadAvailabilityData = async () => {
+      if (loading) return;
+      
       const today = new Date();
       const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
       
-      // Fetch reservation data
+      // Fetch reservation data first
       await fetchAvailabilityData(
         format(today, 'yyyy-MM-dd'),
         format(twoMonthsLater, 'yyyy-MM-dd')
@@ -36,18 +38,20 @@ const ReservationCalendar = () => {
       const available = new Set<string>();
       for (let i = 0; i < 60; i++) {
         const checkDate = addDays(today, i);
-        const isAvailable = await isReservationAvailable(checkDate);
-        if (isAvailable) {
-          available.add(format(checkDate, 'yyyy-MM-dd'));
+        try {
+          const isAvailable = await isReservationAvailable(checkDate);
+          if (isAvailable) {
+            available.add(format(checkDate, 'yyyy-MM-dd'));
+          }
+        } catch (error) {
+          console.error(`Error checking availability for ${format(checkDate, 'yyyy-MM-dd')}:`, error);
         }
       }
       setAvailableDates(available);
     };
 
-    if (!loading) {
-      loadAvailabilityData();
-    }
-  }, [fetchAvailabilityData, isReservationAvailable, loading]);
+    loadAvailabilityData();
+  }, [loading]); // Remove fetchAvailabilityData and isReservationAvailable dependencies to prevent loops
 
   // Check if a date is blocked by admin
   const isDateBlocked = (date: Date) => {
@@ -77,8 +81,12 @@ const ReservationCalendar = () => {
   };
 
   const handleDateSelect = (date: Date | undefined) => {
+    // Only update selectedDate on user click, don't auto-update based on availability
     if (date && isAvailableForReservation(date)) {
       setSelectedDate(date);
+    } else if (date && !isAvailableForReservation(date)) {
+      // Clear selection if user clicks unavailable date
+      setSelectedDate(undefined);
     }
   };
 
@@ -98,9 +106,9 @@ const ReservationCalendar = () => {
 
   const modifiersStyles = {
     available: {
-      backgroundColor: 'hsl(var(--card))',
+      backgroundColor: 'hsl(var(--gold) / 0.1)',
       color: 'hsl(var(--foreground))',
-      border: '1px solid hsl(var(--gold) / 0.3)',
+      border: '1px solid hsl(var(--gold) / 0.5)',
     },
     unavailable: {
       color: 'hsl(var(--muted-foreground))',
@@ -116,12 +124,13 @@ const ReservationCalendar = () => {
       cursor: 'not-allowed'
     },
     selected: {
-      backgroundColor: 'hsl(var(--gold))',
+      backgroundColor: 'hsl(var(--gold))', // 濃いオレンジ背景
       color: 'white',
       fontWeight: 'bold'
     },
     today: {
-      border: '2px solid hsl(var(--gold))',
+      backgroundColor: 'hsl(142, 76%, 36%)', // 緑背景
+      color: 'white',
       fontWeight: 'bold'
     }
   };
@@ -208,7 +217,7 @@ const ReservationCalendar = () => {
                 </h3>
                 <div className="space-y-3 text-sm text-muted-foreground font-noto">
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border-2 border-gold rounded"></div>
+                    <div className="w-4 h-4 bg-green-600 rounded"></div>
                     <span>本日</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -216,8 +225,12 @@ const ReservationCalendar = () => {
                     <span>選択中の日付</span>
                   </div>
                   <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-gold/10 border border-gold/50 rounded"></div>
+                    <span>予約可能日</span>
+                  </div>
+                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-muted rounded"></div>
-                    <span>予約不可（定休日・期間休業・過去の日付）</span>
+                    <span>予約不可（休業日・過去の日付）</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-destructive/10 border border-destructive rounded"></div>
