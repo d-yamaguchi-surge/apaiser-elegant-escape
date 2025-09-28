@@ -35,7 +35,7 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
   };
 
   const handleFilterChange = (key: keyof FilterType, value: any) => {
-    const newFilters = { ...localFilters, [key]: value };
+    const newFilters = { ...localFilters, [key]: value === 'all' ? undefined : value };
     
     // Reset day if month or year changes
     if (key === 'year' || key === 'month') {
@@ -63,14 +63,14 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <Select 
-            value={localFilters.year?.toString()} 
-            onValueChange={(value) => handleFilterChange('year', value ? parseInt(value) : undefined)}
+            value={localFilters.year?.toString() || 'all'} 
+            onValueChange={(value) => handleFilterChange('year', value === 'all' ? undefined : parseInt(value))}
           >
             <SelectTrigger>
               <SelectValue placeholder="年を選択" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全ての年</SelectItem>
+              <SelectItem value="all">全ての年</SelectItem>
               {years.map(year => (
                 <SelectItem key={year} value={year.toString()}>{year}年</SelectItem>
               ))}
@@ -78,14 +78,14 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
           </Select>
 
           <Select 
-            value={localFilters.month?.toString()} 
-            onValueChange={(value) => handleFilterChange('month', value ? parseInt(value) : undefined)}
+            value={localFilters.month?.toString() || 'all'} 
+            onValueChange={(value) => handleFilterChange('month', value === 'all' ? undefined : parseInt(value))}
           >
             <SelectTrigger>
               <SelectValue placeholder="月を選択" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全ての月</SelectItem>
+              <SelectItem value="all">全ての月</SelectItem>
               {months.map(month => (
                 <SelectItem key={month.value} value={month.value.toString()}>{month.label}</SelectItem>
               ))}
@@ -93,15 +93,15 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
           </Select>
 
           <Select 
-            value={localFilters.day?.toString()} 
-            onValueChange={(value) => handleFilterChange('day', value ? parseInt(value) : undefined)}
+            value={localFilters.day?.toString() || 'all'} 
+            onValueChange={(value) => handleFilterChange('day', value === 'all' ? undefined : parseInt(value))}
             disabled={!localFilters.year || !localFilters.month}
           >
             <SelectTrigger>
               <SelectValue placeholder="日を選択" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全ての日</SelectItem>
+              <SelectItem value="all">全ての日</SelectItem>
               {localFilters.year && localFilters.month && 
                 getDaysInMonth(localFilters.year, localFilters.month).map(day => (
                   <SelectItem key={day} value={day.toString()}>{day}日</SelectItem>
@@ -111,14 +111,14 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
           </Select>
 
           <Select 
-            value={localFilters.status || ''} 
-            onValueChange={(value) => handleFilterChange('status', value || undefined)}
+            value={localFilters.status || 'all'} 
+            onValueChange={(value) => handleFilterChange('status', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="ステータス" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全てのステータス</SelectItem>
+              <SelectItem value="all">全てのステータス</SelectItem>
               <SelectItem value="pending">未承認</SelectItem>
               <SelectItem value="approved">承認済み</SelectItem>
               <SelectItem value="cancelled">キャンセル</SelectItem>
