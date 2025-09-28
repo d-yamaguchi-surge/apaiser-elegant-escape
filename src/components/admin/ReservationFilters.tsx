@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { ReservationFilters as FilterType } from '@/modules/reservation/hooks/useReservations';
@@ -56,12 +55,8 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>フィルタリング</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div className="mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <Select 
             value={localFilters.year?.toString() || 'all'} 
             onValueChange={(value) => handleFilterChange('year', value === 'all' ? undefined : parseInt(value))}
@@ -132,8 +127,7 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
           <Button onClick={clearFilters} variant="outline">
             クリア
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

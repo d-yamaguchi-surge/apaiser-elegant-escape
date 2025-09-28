@@ -1,15 +1,9 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Reservation } from '@/modules/reservation/hooks/useReservations';
 
-// Extend jsPDF to include autoTable method
-interface jsPDFWithAutoTable extends jsPDF {
-  autoTable: (options: any) => jsPDF;
-  lastAutoTable?: { finalY: number };
-}
-
 export const generateTodayReservationsPDF = (reservations: Reservation[]) => {
-  const doc = new jsPDF() as jsPDFWithAutoTable;
+  const doc = new jsPDF();
   
   // Logo (placeholder - you can add the actual logo later)
   doc.setFontSize(20);
@@ -35,7 +29,7 @@ export const generateTodayReservationsPDF = (reservations: Reservation[]) => {
   ]);
   
   // Generate table
-  doc.autoTable({
+  autoTable(doc, {
     head: [['氏名', '人数', '時間', '電話', 'メール', '備考']],
     body: tableData,
     startY: 70,
@@ -63,7 +57,7 @@ export const generateTodayReservationsPDF = (reservations: Reservation[]) => {
   const totalGuests = reservations.reduce((sum, reservation) => sum + reservation.party_size, 0);
   
   // Add footer with total
-  const finalY = doc.lastAutoTable?.finalY || 70;
+  const finalY = (doc as any).lastAutoTable?.finalY || 70;
   doc.setFontSize(12);
   doc.text(`合計：${totalGuests}名`, 20, finalY + 20);
   
