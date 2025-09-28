@@ -1,30 +1,53 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
-import { format, isToday, getDay, isBefore, startOfDay } from 'date-fns';
+import { format, isToday, getDay, isBefore, startOfDay, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { useReservations } from '@/modules/reservation/hooks/useReservations';
 import { useBlockedDates } from '@/modules/blockedDates/hooks/useBlockedDates';
+import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
-  const { reservationCounts, fetchAvailabilityData } = useReservations();
-  const { blockedDates } = useBlockedDates();
+  const { reservationCounts, loading: reservationLoading, fetchAvailabilityData } = useReservations();
+  const { blockedDates, loading: blockedLoading } = useBlockedDates();
+  const { recurringClosedDays, periodClosures, loading: businessLoading, isReservationAvailable } = useBusinessDays();
 
-  // Load availability data when component mounts
-  React.useEffect(() => {
-    const today = new Date();
-    const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
-    
-    fetchAvailabilityData(
-      format(today, 'yyyy-MM-dd'),
-      format(twoMonthsLater, 'yyyy-MM-dd')
-    );
-  }, [fetchAvailabilityData]);
+  const loading = reservationLoading || blockedLoading || businessLoading;
+
+  // Load availability data and check dates when component mounts or data changes
+  useEffect(() => {
+    const loadAvailabilityData = async () => {
+      const today = new Date();
+      const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
+      
+      // Fetch reservation data
+      await fetchAvailabilityData(
+        format(today, 'yyyy-MM-dd'),
+        format(twoMonthsLater, 'yyyy-MM-dd')
+      );
+
+      // Check availability for each date in the next 2 months
+      const available = new Set<string>();
+      for (let i = 0; i < 60; i++) {
+        const checkDate = addDays(today, i);
+        const isAvailable = await isReservationAvailable(checkDate);
+        if (isAvailable) {
+          available.add(format(checkDate, 'yyyy-MM-dd'));
+        }
+      }
+      setAvailableDates(available);
+    };
+
+    if (!loading) {
+      loadAvailabilityData();
+    }
+  }, [fetchAvailabilityData, isReservationAvailable, loading]);
 
   // Check if a date is blocked by admin
   const isDateBlocked = (date: Date) => {
@@ -39,31 +62,18 @@ const ReservationCalendar = () => {
     return blockedDate?.reason;
   };
 
-  // Check if a date is available for reservation
+  // Check if a date is available for reservation (sync version)
   const isAvailableForReservation = (date: Date) => {
-    const day = getDay(date);
     const today = startOfDay(new Date());
     
-    // Not available if it's Tuesday (closed day) or in the past
-    if (day === 2 || isBefore(date, today)) {
-      return false;
-    }
-
-    // Not available if blocked by admin
-    if (isDateBlocked(date)) {
+    // Not available if in the past
+    if (isBefore(date, today)) {
       return false;
     }
     
-    // Check if date has too many reservations (max 8 per day)
+    // Check if date is in the available dates set
     const dateString = format(date, 'yyyy-MM-dd');
-    const reservationCount = reservationCounts[dateString] || 0;
-    
-    // If 8 or more reservations, consider it full
-    if (reservationCount >= 8) {
-      return false;
-    }
-    
-    return true;
+    return availableDates.has(dateString);
   };
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -207,7 +217,7 @@ const ReservationCalendar = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-muted rounded"></div>
-                    <span>予約不可（火曜定休・過去の日付）</span>
+                    <span>予約不可（定休日・期間休業・過去の日付）</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-destructive/10 border border-destructive rounded"></div>
@@ -216,7 +226,7 @@ const ReservationCalendar = () => {
                 </div>
                 <div className="mt-4 pt-4 border-t border-gold/20 space-y-2 text-xs text-muted-foreground">
                   <p>• 当日のご予約はお電話にてお願いいたします</p>
-                  <p>• 火曜日は定休日のため予約できません</p>
+                  <p>• 定休日・期間休業・予約不可日は選択できません</p>
                   <p>• 赤枠の日付は管理者により予約不可に設定されています</p>
                 </div>
               </CardContent>

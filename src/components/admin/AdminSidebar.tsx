@@ -15,7 +15,7 @@ const navigation = [
   { name: 'ダッシュボード', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'お知らせ', href: '/admin/news', icon: Newspaper },
   { name: '予約管理', href: '/admin/reservations', icon: Calendar },
-  { name: '予約不可日', href: '/admin/blocked-dates', icon: CalendarX },
+  { name: '営業日管理', href: '/admin/business-days', icon: CalendarX },
   { name: 'ギャラリー', href: '/admin/gallery', icon: Image },
 ];
 

@@ -38,6 +38,33 @@ export type Database = {
         }
         Relationships: []
       }
+      business_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           caption: string | null
@@ -94,6 +121,63 @@ export type Database = {
           id?: string
           published_date?: string
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      period_closures: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          is_active: boolean
+          reason: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          is_active?: boolean
+          reason: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          reason?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recurring_closed_days: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          id: string
+          is_active: boolean
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          id?: string
+          is_active?: boolean
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          is_active?: boolean
+          reason?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -185,6 +269,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_business_day: {
+        Args: { check_date: string }
+        Returns: boolean
+      }
+      is_reservation_available: {
+        Args: { check_date: string }
         Returns: boolean
       }
     }

@@ -15,7 +15,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminGallery from "./pages/admin/AdminGallery";
-import AdminBlockedDates from "./pages/admin/AdminBlockedDates";
+import AdminBusinessDays from "./pages/admin/AdminBusinessDays";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
 
@@ -53,9 +54,11 @@ const App = () => (
                 <AdminGallery />
               </ProtectedRoute>
             } />
-            <Route path="/admin/blocked-dates" element={
+            <Route path="/admin/business-days" element={
               <ProtectedRoute>
-                <AdminBlockedDates />
+                <AdminLayout>
+                  <AdminBusinessDays />
+                </AdminLayout>
               </ProtectedRoute>
             } />
             
