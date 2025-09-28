@@ -3,6 +3,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { useState, useEffect } from 'react';
 import { format, isToday, getDay, addDays, startOfDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
 
 const BusinessCalendar = () => {
@@ -104,6 +105,11 @@ const BusinessCalendar = () => {
                 className="rounded-md border-gold/20"
                 fromDate={new Date()}
                 toDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                disableNavigation={false}
+                components={{
+                  IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
+                  IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />
+                }}
               />
             </CardContent>
           </Card>

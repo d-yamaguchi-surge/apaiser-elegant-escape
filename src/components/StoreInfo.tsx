@@ -89,16 +89,17 @@ const StoreInfo = () => {
                 <h3 className="font-noto text-lg font-bold text-foreground mb-4">
                   アクセスマップ
                 </h3>
-                <div className="bg-muted rounded-lg h-64 lg:h-80 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-12 h-12 text-gold mx-auto mb-4" />
-                    <p className="font-noto text-muted-foreground">
-                      Google Mapを埋め込み予定
-                    </p>
-                    <p className="font-noto text-sm text-muted-foreground mt-2">
-                      宇都宮市花房1-1
-                    </p>
-                  </div>
+                <div className="rounded-lg h-64 lg:h-80 overflow-hidden">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d510.1506588181201!2d139.8772322399647!3d36.54794132440553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sja!2sjp!4v1759071488274!5m2!1sja!2sjp"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="rounded-lg"
+                  />
                 </div>
                 
                 <div className="mt-6 space-y-3">

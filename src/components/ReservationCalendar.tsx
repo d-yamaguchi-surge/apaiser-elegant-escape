@@ -12,6 +12,7 @@ import {
   addDays,
 } from "date-fns";
 import { ja } from "date-fns/locale";
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useReservations } from "@/modules/reservation/hooks/useReservations";
 import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
@@ -188,6 +189,11 @@ const ReservationCalendar = () => {
                 toDate={
                   new Date(new Date().setMonth(new Date().getMonth() + 3))
                 }
+                disableNavigation={false}
+                components={{
+                  IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
+                  IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />
+                }}
               />
             </CardContent>
           </Card>
