@@ -37,12 +37,14 @@ const Hero = () => {
             <Button 
               variant="gold"
               size="lg"
+              onClick={() => document.getElementById('reservation')?.scrollIntoView({ behavior: 'smooth' })}
             >
               ご予約はこちら
             </Button>
             <Button 
               variant="elegant"
               size="lg"
+              onClick={() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })}
             >
               メニューを見る
             </Button>

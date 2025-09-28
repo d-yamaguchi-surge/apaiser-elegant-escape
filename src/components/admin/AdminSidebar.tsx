@@ -10,6 +10,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/apaiser_logo.svg';
 
 const navigation = [
   { name: 'ダッシュボード', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -25,9 +26,12 @@ export const AdminSidebar = () => {
 
   return (
     <div className="w-64 bg-card border-r border-border">
-      <div className="p-6">
-        <h1 className="text-xl font-bold text-foreground">管理画面</h1>
-        <p className="text-sm text-muted-foreground mt-1">Apaiser Restaurant</p>
+      <div className="p-6 flex justify-center">
+        <img 
+          src={logo} 
+          alt="apaiser logo" 
+          className="h-16 w-auto object-contain"
+        />
       </div>
       
       <nav className="px-4 pb-4">

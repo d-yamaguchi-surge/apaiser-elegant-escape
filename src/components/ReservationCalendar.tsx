@@ -123,7 +123,7 @@ const ReservationCalendar = () => {
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-6">
             Reservation
           </h2>
-          <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
+          
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             特別な時間をお過ごしいただくため<br />
             事前のご予約をおすすめしております
@@ -148,6 +148,8 @@ const ReservationCalendar = () => {
                 modifiersStyles={modifiersStyles}
                 className="rounded-md border-gold/20"
                 disabled={(date) => !isAvailableForReservation(date)}
+                fromDate={new Date()}
+                toDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
               />
             </CardContent>
           </Card>
