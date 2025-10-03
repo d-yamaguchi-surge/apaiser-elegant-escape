@@ -105,7 +105,8 @@ AS $$
   ) AND NOT EXISTS (
     -- 期間指定休業チェック
     SELECT 1 FROM public.period_closures 
-    WHERE check_date BETWEEN start_date AND end_date 
+    WHERE check_date >= start_date
+      AND check_date < end_date + interval '1 day'
       AND is_active = true
   );
 $$;
