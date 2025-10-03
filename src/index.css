@@ -8,50 +8,58 @@
 @layer base {
   :root {
     /* Base Colors - Elegant Neutrals */
-    --background: 43 44% 98%;        /* Off-white cream */
-    --foreground: 20 14% 15%;        /* Deep charcoal */
-    
+    --background: 43 44% 98%; /* Off-white cream */
+    --foreground: 20 14% 15%; /* Deep charcoal */
+
     /* Card System */
     --card: 43 44% 98%;
     --card-foreground: 20 14% 15%;
-    
+
     /* Interactive Elements */
     --popover: 43 44% 98%;
     --popover-foreground: 20 14% 15%;
-    
+
     /* Brand Colors - Deep Brown & Gold Accent */
-    --primary: 25 47% 12%;           /* Deep espresso brown */
+    --primary: 25 47% 12%; /* Deep espresso brown */
     --primary-foreground: 43 44% 98%;
-    
-    --secondary: 35 25% 20%;         /* Rich chocolate brown */
+
+    --secondary: 35 25% 20%; /* Rich chocolate brown */
     --secondary-foreground: 43 44% 98%;
-    
+
     /* Luxury Gold Accent */
-    --gold: 45 85% 55%;              /* Elegant gold */
-    --gold-muted: 45 35% 35%;        /* Darker gold for text */
-    
+    --gold: 45 85% 55%; /* Elegant gold */
+    --gold-muted: 45 35% 35%; /* Darker gold for text */
+
     /* Muted Tones */
     --muted: 40 20% 92%;
     --muted-foreground: 25 10% 45%;
-    
-    --accent: 45 85% 55%;            /* Gold accent */
+
+    --accent: 45 85% 55%; /* Gold accent */
     --accent-foreground: 25 47% 12%;
-    
+
     /* Status Colors */
     --destructive: 0 65% 51%;
     --destructive-foreground: 43 44% 98%;
-    
+
     /* Borders & Inputs */
     --border: 45 35% 85%;
     --input: 45 35% 85%;
     --ring: 45 85% 55%;
-    
+
     /* Layout */
     --radius: 0.25rem;
-    
+
     /* Custom Design Tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(25 47% 12%) 0%, hsl(20 35% 8%) 100%);
-    --gradient-gold: linear-gradient(90deg, hsl(45 85% 55%) 0%, hsl(42 78% 48%) 100%);
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(25 47% 12%) 0%,
+      hsl(20 35% 8%) 100%
+    );
+    --gradient-gold: linear-gradient(
+      90deg,
+      hsl(45 85% 55%) 0%,
+      hsl(42 78% 48%) 100%
+    );
     --shadow-elegant: 0 8px 32px hsl(25 47% 12% / 0.15);
     --shadow-gold: 0 4px 20px hsl(45 85% 55% / 0.25);
     --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -119,23 +127,23 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Noto Serif JP', serif;
+    font-family: "Noto Serif JP", serif;
     line-height: 1.7;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   /* Typography Classes */
   .font-playfair {
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
   }
-  
+
   .font-noto {
-    font-family: 'Noto Serif JP', serif;
+    font-family: "Noto Serif JP", serif;
   }
-  
+
   /* Custom Gradient Text */
   .text-gradient-gold {
     background: var(--gradient-gold);
@@ -143,7 +151,7 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   /* Elegant Animations */
   @keyframes fadeInUp {
     from {
@@ -155,22 +163,46 @@
       transform: translateY(0);
     }
   }
-  
+
   @keyframes goldShimmer {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+    0%,
+    100% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 1;
+    }
   }
-  
+
   .animate-fade-in-up {
     animation: fadeInUp 0.8s ease-out forwards;
   }
-  
+
   .animate-gold-shimmer {
     animation: goldShimmer 2s ease-in-out infinite;
   }
-  
+
   /* Custom Border */
   .border-gold-thin {
     border: 1px solid hsl(var(--gold));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* PC: 固定ヘッダーの高さと一致させる */
+  }
+
+  /* タブレット */
+  @media (max-width: 1024px) {
+    html {
+      scroll-padding-top: 60px;
+    }
+  }
+
+  /* スマホ */
+  @media (max-width: 768px) {
+    html {
+      scroll-padding-top: 40px;
+    } /* ご指定どおり */
   }
 }
