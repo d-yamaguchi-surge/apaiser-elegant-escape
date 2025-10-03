@@ -14,6 +14,12 @@ export interface Reservation {
   special_requests?: string;
   created_at: string;
   updated_at: string;
+  course_id?: string | null;
+  courses?: {
+    id: string;
+    name: string;
+    price: number;
+  } | null;
 }
 
 export interface ReservationFilters {
@@ -46,7 +52,7 @@ export const useReservations = (filters?: ReservationFilters) => {
     try {
       let query = supabase
         .from('reservations')
-        .select('*');
+        .select('*, courses(id, name, price)');
 
       // Apply filters
       if (filters?.year || filters?.month || filters?.day) {
@@ -99,7 +105,7 @@ export const useReservations = (filters?: ReservationFilters) => {
     try {
       const { data, error } = await supabase
         .from('reservations')
-        .select('*');
+        .select('*, courses(id, name, price)');
 
       if (error) throw error;
       calculateStats(data || []);

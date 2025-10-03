@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useReservations, Reservation } from '@/modules/reservation/hooks/useReservations';
+import { useCourses } from '@/modules/courses/hooks/useCourses';
 import { Plus } from 'lucide-react';
 
 interface AddReservationDialogProps {
@@ -23,8 +24,10 @@ export const AddReservationDialog = ({ onReservationAdded }: AddReservationDialo
     party_size: 1,
     status: 'pending' as const,
     special_requests: '',
+    course_id: '',
   });
   const { addReservation } = useReservations();
+  const { courses } = useCourses();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +43,7 @@ export const AddReservationDialog = ({ onReservationAdded }: AddReservationDialo
         party_size: 1,
         status: 'pending',
         special_requests: '',
+        course_id: '',
       });
       setOpen(false);
       onReservationAdded();
@@ -148,6 +152,22 @@ export const AddReservationDialog = ({ onReservationAdded }: AddReservationDialo
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="course_id">コース</Label>
+            <Select value={formData.course_id} onValueChange={(value) => handleChange('course_id', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="コースを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                {courses.map((course) => (
+                  <SelectItem key={course.id} value={course.id}>
+                    {course.name} {course.price > 0 && `(¥${course.price.toLocaleString()})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

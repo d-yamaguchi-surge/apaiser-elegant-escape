@@ -16,6 +16,7 @@ import AdminNews from "./pages/admin/AdminNews";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminBusinessDays from "./pages/admin/AdminBusinessDays";
+import AdminCourses from "./pages/admin/AdminCourses";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,11 @@ const App = () => (
             <Route path="/admin/reservations" element={
               <ProtectedRoute>
                 <AdminReservations />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/courses" element={
+              <ProtectedRoute>
+                <AdminCourses />
               </ProtectedRoute>
             } />
             <Route path="/admin/gallery" element={

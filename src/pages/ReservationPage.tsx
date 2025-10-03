@@ -13,6 +13,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
+import { useCourses } from '@/modules/courses/hooks/useCourses';
 
 const ReservationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,6 +21,7 @@ const ReservationPage = () => {
   const navigate = useNavigate();
   const selectedDateParam = searchParams.get('date');
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedCourse, setSelectedCourse] = useState<string>('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,12 +32,23 @@ const ReservationPage = () => {
     requests: ''
   });
   const { toast } = useToast();
+  const { courses } = useCourses();
 
   useEffect(() => {
     if (selectedDateParam) {
       setSelectedDate(selectedDateParam);
     }
   }, [selectedDateParam]);
+
+  useEffect(() => {
+    // Set default course (table-only) when courses are loaded
+    if (courses.length > 0 && !selectedCourse) {
+      const tableOnlyCourse = courses.find(c => c.name === '席のみ');
+      if (tableOnlyCourse) {
+        setSelectedCourse(tableOnlyCourse.id);
+      }
+    }
+  }, [courses, selectedCourse]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -59,7 +72,8 @@ const ReservationPage = () => {
           reservation_time: formData.time,
           party_size: parseInt(formData.guests),
           special_requests: formData.requests || null,
-          status: 'pending'
+          status: 'pending',
+          course_id: selectedCourse || null
         }]);
 
       if (error) throw error;
@@ -245,14 +259,63 @@ const ReservationPage = () => {
                         <SelectItem value="19:30">19:30</SelectItem>
                         <SelectItem value="20:00">20:00</SelectItem>
                       </SelectContent>
-                    </Select>
-                  </div>
+                  </Select>
                 </div>
+              </div>
 
+              <div className="space-y-2">
+                <Label className="font-noto text-sm font-medium">
+                  コース選択*
+                </Label>
                 <div className="space-y-2">
-                  <Label htmlFor="guests" className="font-noto text-sm font-medium">
-                    人数*
-                  </Label>
+                  {courses.map((course) => (
+                    <button
+                      key={course.id}
+                      type="button"
+                      onClick={() => setSelectedCourse(course.id)}
+                      className={`w-full flex items-start gap-4 p-3 rounded-lg border-2 transition-smooth text-left ${
+                        selectedCourse === course.id
+                          ? 'bg-[#f5e6c8] border-gold'
+                          : 'bg-background border-border hover:border-gold/50'
+                      }`}
+                    >
+                      <div className="flex-shrink-0 w-20 h-20 rounded overflow-hidden bg-muted">
+                        {course.image_path ? (
+                          <img
+                            src={course.image_path}
+                            alt={course.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                            No Image
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-noto font-medium text-foreground mb-1">
+                          {course.name}
+                          {course.price > 0 && (
+                            <span className="ml-2 text-gold">
+                              ¥{course.price.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        {course.description && (
+                          <p className="font-noto text-sm text-muted-foreground line-clamp-2">
+                            {course.description}
+                          </p>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="guests" className="font-noto text-sm font-medium">
+                  人数*
+                </Label>
                   <Select 
                     value={formData.guests}
                     onValueChange={(value) => handleInputChange('guests', value)}

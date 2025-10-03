@@ -5,7 +5,8 @@ import {
   Calendar, 
   Image, 
   LogOut,
-  CalendarX
+  CalendarX,
+  UtensilsCrossed
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const navigation = [
   { name: 'ダッシュボード', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'お知らせ', href: '/admin/news', icon: Newspaper },
   { name: '予約管理', href: '/admin/reservations', icon: Calendar },
+  { name: 'コース管理', href: '/admin/courses', icon: UtensilsCrossed },
   { name: '営業日管理', href: '/admin/business-days', icon: CalendarX },
   { name: 'ギャラリー', href: '/admin/gallery', icon: Image },
 ];

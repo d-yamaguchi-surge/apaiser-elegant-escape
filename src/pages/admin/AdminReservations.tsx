@@ -127,6 +127,16 @@ export default function AdminReservations() {
                       <span className="font-medium">電話:</span> {reservation.customer_phone}
                     </div>
                   )}
+                  {reservation.courses && (
+                    <div>
+                      <span className="font-medium">コース:</span> {reservation.courses.name}
+                      {reservation.courses.price > 0 && (
+                        <span className="ml-2 text-muted-foreground">
+                          (¥{reservation.courses.price.toLocaleString()})
+                        </span>
+                      )}
+                    </div>
+                  )}
                   {reservation.special_requests && (
                     <div>
                       <span className="font-medium">特別なご要望:</span>
