@@ -1,35 +1,41 @@
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
-import { supabase } from '@/integrations/supabase/client';
-import { useCourses } from '@/modules/courses/hooks/useCourses';
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
+import { useCourses } from "@/modules/courses/hooks/useCourses";
 
 const ReservationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const selectedDateParam = searchParams.get('date');
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedCourse, setSelectedCourse] = useState<string>('');
+  const selectedDateParam = searchParams.get("date");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    time: '',
-    guests: '',
-    requests: ''
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    time: "",
+    guests: "",
+    requests: "",
   });
   const { toast } = useToast();
   const { courses } = useCourses();
@@ -43,7 +49,7 @@ const ReservationPage = () => {
   useEffect(() => {
     // Set default course (table-only) when courses are loaded
     if (courses.length > 0 && !selectedCourse) {
-      const tableOnlyCourse = courses.find(c => c.name === '席のみ');
+      const tableOnlyCourse = courses.find((c) => c.name === "席のみ");
       if (tableOnlyCourse) {
         setSelectedCourse(tableOnlyCourse.id);
       }
@@ -51,20 +57,19 @@ const ReservationPage = () => {
   }, [courses, selectedCourse]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      const { error } = await supabase
-        .from('reservations')
-        .insert([{
+      const { error } = await supabase.from("reservations").insert([
+        {
           customer_name: `${formData.lastName} ${formData.firstName}`,
           customer_email: formData.email,
           customer_phone: formData.phone,
@@ -72,9 +77,10 @@ const ReservationPage = () => {
           reservation_time: formData.time,
           party_size: parseInt(formData.guests),
           special_requests: formData.requests || null,
-          status: 'pending',
-          course_id: selectedCourse || null
-        }]);
+          status: "pending",
+          course_id: selectedCourse || null,
+        },
+      ]);
 
       if (error) throw error;
 
@@ -85,21 +91,20 @@ const ReservationPage = () => {
 
       // Reset form and navigate to home
       setFormData({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email: '',
-        time: '',
-        guests: '',
-        requests: ''
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        time: "",
+        guests: "",
+        requests: "",
       });
-      
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
 
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error) {
-      console.error('Error creating reservation:', error);
+      console.error("Error creating reservation:", error);
       toast({
         title: "エラー",
         description: "予約の送信に失敗しました。もう一度お試しください。",
@@ -111,10 +116,10 @@ const ReservationPage = () => {
   };
 
   const formatDisplayDate = (dateString: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     try {
       const date = new Date(dateString);
-      return format(date, 'yyyy年M月d日 (EEEE)', { locale: ja });
+      return format(date, "yyyy年M月d日 (EEEE)", { locale: ja });
     } catch {
       return dateString;
     }
@@ -123,7 +128,7 @@ const ReservationPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-4xl mx-auto">
@@ -136,9 +141,13 @@ const ReservationPage = () => {
               ご予約内容を入力してください
             </p>
           </div>
-          
+
           <div className="text-center">
-            <Button asChild variant="outline" className="border-gold hover:bg-gold hover:text-white transition-smooth">
+            <Button
+              asChild
+              variant="outline"
+              className="border-gold hover:bg-gold hover:text-white transition-smooth"
+            >
               <Link to="/#reservation" className="flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
                 <span className="font-noto">カレンダーに戻る</span>
@@ -158,7 +167,9 @@ const ReservationPage = () => {
               </CardTitle>
               {selectedDate && (
                 <div className="text-center mt-4 p-4 bg-gold/10 rounded-lg">
-                  <p className="font-noto text-sm text-muted-foreground mb-1">ご予約希望日</p>
+                  <p className="font-noto text-sm text-muted-foreground mb-1">
+                    ご予約希望日
+                  </p>
                   <p className="font-playfair text-xl font-bold text-gold">
                     {formatDisplayDate(selectedDate)}
                   </p>
@@ -167,82 +178,155 @@ const ReservationPage = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="font-noto text-sm font-medium">
+                    コース選択*
+                  </Label>
+                  <div className="space-y-2">
+                    {courses.map((course) => (
+                      <button
+                        key={course.id}
+                        type="button"
+                        onClick={() => setSelectedCourse(course.id)}
+                        className={`w-full flex items-start gap-4 p-3 rounded-lg border-2 transition-smooth text-left ${
+                          selectedCourse === course.id
+                            ? "bg-[#f5e6c8] border-gold"
+                            : "bg-background border-border hover:border-gold/50"
+                        }`}
+                      >
+                        <div className="flex-shrink-0 w-20 h-20 rounded overflow-hidden bg-muted">
+                          {course.image_path ? (
+                            <img
+                              src={course.image_path}
+                              alt={course.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-noto font-medium text-foreground mb-1">
+                            {course.name}
+                            {course.price > 0 && (
+                              <span className="ml-2 text-gold">
+                                ¥{course.price.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          {course.description && (
+                            <p className="font-noto text-sm text-muted-foreground line-clamp-2">
+                              {course.description}
+                            </p>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="lastName"
+                      className="font-noto text-sm font-medium"
+                    >
                       お名前（姓）*
                     </Label>
-                    <Input 
-                      id="lastName" 
+                    <Input
+                      id="lastName"
                       value={formData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      required 
+                      onChange={(e) =>
+                        handleInputChange("lastName", e.target.value)
+                      }
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="firstName"
+                      className="font-noto text-sm font-medium"
+                    >
                       お名前（名）*
                     </Label>
-                    <Input 
-                      id="firstName" 
+                    <Input
+                      id="firstName"
                       value={formData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      required 
+                      onChange={(e) =>
+                        handleInputChange("firstName", e.target.value)
+                      }
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="phone"
+                    className="font-noto text-sm font-medium"
+                  >
                     お電話番号*
                   </Label>
-                  <Input 
-                    id="phone" 
-                    type="tel" 
+                  <Input
+                    id="phone"
+                    type="tel"
                     value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    required 
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    required
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="email"
+                    className="font-noto text-sm font-medium"
+                  >
                     メールアドレス*
                   </Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
+                  <Input
+                    id="email"
+                    type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    required 
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    required
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="date"
+                      className="font-noto text-sm font-medium"
+                    >
                       ご希望日*
                     </Label>
-                    <Input 
-                      id="date" 
-                      type="date" 
+                    <Input
+                      id="date"
+                      type="date"
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      required 
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="time" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="time"
+                      className="font-noto text-sm font-medium"
+                    >
                       ご希望時間*
                     </Label>
-                    <Select 
+                    <Select
                       value={formData.time}
-                      onValueChange={(value) => handleInputChange('time', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("time", value)
+                      }
                       required
                     >
                       <SelectTrigger className="border-gold/30 focus:border-gold transition-smooth">
@@ -259,66 +343,22 @@ const ReservationPage = () => {
                         <SelectItem value="19:30">19:30</SelectItem>
                         <SelectItem value="20:00">20:00</SelectItem>
                       </SelectContent>
-                  </Select>
+                    </Select>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="font-noto text-sm font-medium">
-                  コース選択*
-                </Label>
                 <div className="space-y-2">
-                  {courses.map((course) => (
-                    <button
-                      key={course.id}
-                      type="button"
-                      onClick={() => setSelectedCourse(course.id)}
-                      className={`w-full flex items-start gap-4 p-3 rounded-lg border-2 transition-smooth text-left ${
-                        selectedCourse === course.id
-                          ? 'bg-[#f5e6c8] border-gold'
-                          : 'bg-background border-border hover:border-gold/50'
-                      }`}
-                    >
-                      <div className="flex-shrink-0 w-20 h-20 rounded overflow-hidden bg-muted">
-                        {course.image_path ? (
-                          <img
-                            src={course.image_path}
-                            alt={course.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                            No Image
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-noto font-medium text-foreground mb-1">
-                          {course.name}
-                          {course.price > 0 && (
-                            <span className="ml-2 text-gold">
-                              ¥{course.price.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                        {course.description && (
-                          <p className="font-noto text-sm text-muted-foreground line-clamp-2">
-                            {course.description}
-                          </p>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="guests" className="font-noto text-sm font-medium">
-                  人数*
-                </Label>
-                  <Select 
+                  <Label
+                    htmlFor="guests"
+                    className="font-noto text-sm font-medium"
+                  >
+                    人数*
+                  </Label>
+                  <Select
                     value={formData.guests}
-                    onValueChange={(value) => handleInputChange('guests', value)}
+                    onValueChange={(value) =>
+                      handleInputChange("guests", value)
+                    }
                     required
                   >
                     <SelectTrigger className="border-gold/30 focus:border-gold transition-smooth">
@@ -336,25 +376,30 @@ const ReservationPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="requests" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="requests"
+                    className="font-noto text-sm font-medium"
+                  >
                     ご要望・アレルギー等
                   </Label>
-                  <Textarea 
+                  <Textarea
                     id="requests"
                     value={formData.requests}
-                    onChange={(e) => handleInputChange('requests', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("requests", e.target.value)
+                    }
                     placeholder="お誕生日のお祝い、アレルギー情報など、ご要望がございましたらお書きください"
                     className="border-gold/30 focus:border-gold transition-smooth resize-none h-24"
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   variant="gold"
                   className="w-full py-3"
                 >
-                  {isSubmitting ? '送信中...' : 'ご予約を送信'}
+                  {isSubmitting ? "送信中..." : "ご予約を送信"}
                 </Button>
               </form>
             </CardContent>

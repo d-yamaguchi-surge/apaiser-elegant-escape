@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Instagram, Twitter } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Instagram, Twitter } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -11,7 +11,8 @@ const Footer = () => {
               apaiser
             </h3>
             <p className="font-noto text-background/80 leading-relaxed mb-6 max-w-md">
-              一皿ごとに、誇りを込めて。<br />
+              一皿ごとに、誇りを込めて。
+              <br />
               心を込めた料理と静寂な空間で、特別なひとときをお過ごしください。
             </p>
             <div className="flex space-x-4">
@@ -60,8 +61,10 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    〒602-8566<br />
-                    栃木県宇都宮市花房<br />
+                    〒602-8566
+                    <br />
+                    栃木県宇都宮市花房
+                    <br />
                     烏丸通今出川上ル
                   </p>
                 </div>
@@ -79,7 +82,8 @@ const Footer = () => {
                 <Clock className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    ランチ<br />
+                    ランチ
+                    <br />
                     11:30〜15:00 (L.O. 14:30)
                   </p>
                 </div>
@@ -88,7 +92,8 @@ const Footer = () => {
                 <Clock className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    ディナー<br />
+                    ディナー
+                    <br />
                     17:30〜22:00 (L.O. 21:30)
                   </p>
                 </div>
@@ -104,16 +109,25 @@ const Footer = () => {
         <div className="border-t border-background/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="font-noto text-sm text-background/60">
-              © 2024 apaiser. All rights reserved.
+              © 2025 apaiser. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <a href="#home" className="font-noto text-sm text-background/60 hover:text-gold transition-smooth">
+              <a
+                href="#home"
+                className="font-noto text-sm text-background/60 hover:text-gold transition-smooth"
+              >
                 ホーム
               </a>
-              <a href="#menu" className="font-noto text-sm text-background/60 hover:text-gold transition-smooth">
+              <a
+                href="#menu"
+                className="font-noto text-sm text-background/60 hover:text-gold transition-smooth"
+              >
                 メニュー
               </a>
-              <a href="#reservation" className="font-noto text-sm text-background/60 hover:text-gold transition-smooth">
+              <a
+                href="#reservation"
+                className="font-noto text-sm text-background/60 hover:text-gold transition-smooth"
+              >
                 予約
               </a>
             </div>
