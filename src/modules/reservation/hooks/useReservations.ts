@@ -23,9 +23,8 @@ export interface Reservation {
 }
 
 export interface ReservationFilters {
-  year?: number;
-  month?: number;
-  day?: number;
+  startDate?: string;
+  endDate?: string;
   status?: 'pending' | 'approved' | 'cancelled';
 }
 
@@ -54,20 +53,17 @@ export const useReservations = (filters?: ReservationFilters) => {
         .from('reservations')
         .select('*, courses(id, name, price)');
 
-      // Apply filters
-      if (filters?.year || filters?.month || filters?.day) {
-        const dateFilter = getDateFilter(filters);
-        if (dateFilter) {
-          if (filters.day) {
-            query = query.eq('reservation_date', dateFilter);
-          } else if (filters.month) {
-            const startDate = `${filters.year}-${String(filters.month).padStart(2, '0')}-01`;
-            const endDate = new Date(filters.year!, filters.month!, 0).toISOString().split('T')[0];
-            query = query.gte('reservation_date', startDate).lte('reservation_date', endDate);
-          } else if (filters.year) {
-            query = query.gte('reservation_date', `${filters.year}-01-01`).lte('reservation_date', `${filters.year}-12-31`);
-          }
-        }
+      // Apply date range filters
+      if (filters?.startDate) {
+        query = query.gte('reservation_date', filters.startDate);
+      } else {
+        // Default: show today and future reservations
+        const today = new Date().toISOString().split('T')[0];
+        query = query.gte('reservation_date', today);
+      }
+      
+      if (filters?.endDate) {
+        query = query.lte('reservation_date', filters.endDate);
       }
 
       if (filters?.status) {
@@ -86,7 +82,7 @@ export const useReservations = (filters?: ReservationFilters) => {
       setReservations(data || []);
       
       // Calculate stats using all reservations (for dashboard stats)
-      if (!filters?.year && !filters?.month && !filters?.day && !filters?.status) {
+      if (!filters?.startDate && !filters?.endDate && !filters?.status) {
         calculateStats(data || []);
       }
     } catch (error) {
@@ -114,12 +110,6 @@ export const useReservations = (filters?: ReservationFilters) => {
     }
   };
 
-  const getDateFilter = (filters: ReservationFilters) => {
-    if (filters.day && filters.month && filters.year) {
-      return `${filters.year}-${String(filters.month).padStart(2, '0')}-${String(filters.day).padStart(2, '0')}`;
-    }
-    return null;
-  };
 
   const calculateStats = (allReservations: Reservation[]) => {
     const today = new Date().toISOString().split('T')[0];
@@ -257,12 +247,8 @@ export const useReservations = (filters?: ReservationFilters) => {
   };
 
   useEffect(() => {
-    if (filters && Object.keys(filters).length > 0) {
-      fetchReservations();
-    } else {
-      fetchReservations();
-    }
-  }, [filters?.year, filters?.month, filters?.day, filters?.status]);
+    fetchReservations();
+  }, [filters?.startDate, filters?.endDate, filters?.status]);
 
   return {
     reservations,

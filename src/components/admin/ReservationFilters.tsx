@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ReservationFilters as FilterType } from '@/modules/reservation/hooks/useReservations';
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, addDays } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { DateRange } from 'react-day-picker';
 
 interface ReservationFiltersProps {
   onFiltersChange: (filters: FilterType) => void;
@@ -9,124 +16,184 @@ interface ReservationFiltersProps {
 }
 
 export const ReservationFilters = ({ onFiltersChange, currentFilters }: ReservationFiltersProps) => {
-  const [localFilters, setLocalFilters] = useState<FilterType>(currentFilters);
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 3 }, (_, i) => currentYear + i - 1);
-  const months = [
-    { value: 1, label: '1月' },
-    { value: 2, label: '2月' },
-    { value: 3, label: '3月' },
-    { value: 4, label: '4月' },
-    { value: 5, label: '5月' },
-    { value: 6, label: '6月' },
-    { value: 7, label: '7月' },
-    { value: 8, label: '8月' },
-    { value: 9, label: '9月' },
-    { value: 10, label: '10月' },
-    { value: 11, label: '11月' },
-    { value: 12, label: '12月' },
-  ];
-
-  const getDaysInMonth = (year: number, month: number) => {
-    const daysInMonth = new Date(year, month, 0).getDate();
-    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  };
-
-  const handleFilterChange = (key: keyof FilterType, value: any) => {
-    const newFilters = { ...localFilters, [key]: value === 'all' ? undefined : value };
-    
-    // Reset day if month or year changes
-    if (key === 'year' || key === 'month') {
-      newFilters.day = undefined;
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+    if (currentFilters.startDate && currentFilters.endDate) {
+      return {
+        from: new Date(currentFilters.startDate),
+        to: new Date(currentFilters.endDate)
+      };
     }
-    
-    setLocalFilters(newFilters);
+    // Default: today to 1 week later
+    return {
+      from: new Date(),
+      to: addDays(new Date(), 7)
+    };
+  });
+  const [status, setStatus] = useState<string>(currentFilters.status || 'all');
+
+  const handleQuickRange = (rangeType: 'today' | 'thisWeek' | 'thisMonth' | 'thisYear' | 'all') => {
+    const now = new Date();
+    let newRange: DateRange | undefined;
+
+    switch (rangeType) {
+      case 'today':
+        newRange = { from: now, to: now };
+        break;
+      case 'thisWeek':
+        newRange = { from: startOfWeek(now, { locale: ja }), to: endOfWeek(now, { locale: ja }) };
+        break;
+      case 'thisMonth':
+        newRange = { from: startOfMonth(now), to: endOfMonth(now) };
+        break;
+      case 'thisYear':
+        newRange = { from: startOfYear(now), to: endOfYear(now) };
+        break;
+      case 'all':
+        newRange = undefined;
+        break;
+    }
+
+    setDateRange(newRange);
+    applyFilters(newRange, status);
   };
 
-  const applyFilters = () => {
-    onFiltersChange(localFilters);
+  const applyFilters = (range: DateRange | undefined, selectedStatus: string) => {
+    const filters: FilterType = {};
+
+    if (range?.from) {
+      filters.startDate = format(range.from, 'yyyy-MM-dd');
+    }
+    if (range?.to) {
+      filters.endDate = format(range.to, 'yyyy-MM-dd');
+    }
+    if (selectedStatus !== 'all') {
+      filters.status = selectedStatus as 'pending' | 'approved' | 'cancelled';
+    }
+
+    onFiltersChange(filters);
   };
 
-  const clearFilters = () => {
-    const emptyFilters = {};
-    setLocalFilters(emptyFilters);
-    onFiltersChange(emptyFilters);
+  const handleApply = () => {
+    applyFilters(dateRange, status);
+  };
+
+  const handleClear = () => {
+    setDateRange(undefined);
+    setStatus('all');
+    onFiltersChange({});
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
   };
 
   return (
-    <div className="mb-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <Select 
-            value={localFilters.year?.toString() || 'all'} 
-            onValueChange={(value) => handleFilterChange('year', value === 'all' ? undefined : parseInt(value))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="年を選択" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全ての年</SelectItem>
-              {years.map(year => (
-                <SelectItem key={year} value={year.toString()}>{year}年</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="mb-6 space-y-4">
+      {/* Main filter controls */}
+      <div className="flex flex-wrap items-center gap-4">
+        {/* Date Range Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "justify-start text-left font-normal min-w-[260px]",
+                !dateRange && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, 'yyyy/MM/dd', { locale: ja })} ~{' '}
+                    {format(dateRange.to, 'yyyy/MM/dd', { locale: ja })}
+                  </>
+                ) : (
+                  format(dateRange.from, 'yyyy/MM/dd', { locale: ja })
+                )
+              ) : (
+                <span>期間を選択</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={2}
+              locale={ja}
+              className="pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
 
-          <Select 
-            value={localFilters.month?.toString() || 'all'} 
-            onValueChange={(value) => handleFilterChange('month', value === 'all' ? undefined : parseInt(value))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="月を選択" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全ての月</SelectItem>
-              {months.map(month => (
-                <SelectItem key={month.value} value={month.value.toString()}>{month.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Status Select */}
+        <Select value={status} onValueChange={handleStatusChange}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="ステータス" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全てのステータス</SelectItem>
+            <SelectItem value="pending">承認待ち</SelectItem>
+            <SelectItem value="approved">承認済み</SelectItem>
+            <SelectItem value="cancelled">キャンセル</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select 
-            value={localFilters.day?.toString() || 'all'} 
-            onValueChange={(value) => handleFilterChange('day', value === 'all' ? undefined : parseInt(value))}
-            disabled={!localFilters.year || !localFilters.month}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="日を選択" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全ての日</SelectItem>
-              {localFilters.year && localFilters.month && 
-                getDaysInMonth(localFilters.year, localFilters.month).map(day => (
-                  <SelectItem key={day} value={day.toString()}>{day}日</SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
+        {/* Apply Button */}
+        <Button onClick={handleApply} variant="default">
+          絞り込み
+        </Button>
 
-          <Select 
-            value={localFilters.status || 'all'} 
-            onValueChange={(value) => handleFilterChange('status', value === 'all' ? undefined : value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="ステータス" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全てのステータス</SelectItem>
-              <SelectItem value="pending">未承認</SelectItem>
-              <SelectItem value="approved">承認済み</SelectItem>
-              <SelectItem value="cancelled">キャンセル</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Clear Button */}
+        <Button onClick={handleClear} variant="outline">
+          クリア
+        </Button>
+      </div>
 
-          <Button onClick={applyFilters} variant="default">
-            適用
-          </Button>
-
-          <Button onClick={clearFilters} variant="outline">
-            クリア
-          </Button>
+      {/* Quick select buttons */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleQuickRange('today')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          今日
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleQuickRange('thisWeek')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          今週
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleQuickRange('thisMonth')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          今月
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleQuickRange('thisYear')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          今年
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleQuickRange('all')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          全期間
+        </Button>
       </div>
     </div>
   );
