@@ -18,12 +18,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // まず「ログインしていない」場合を最優先
   if (!user) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  // 次に「管理者ではない」場合
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -37,6 +35,5 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // 両方OKなら内容を表示
   return <>{children}</>;
 };

@@ -99,25 +99,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) console.error("Supabase signOut error:", error);
-
-      // ローカルストレージのトークンを削除
-      localStorage.removeItem("supabase.auth.token");
-      localStorage.removeItem("sb-apaiser-auth-token"); // Supabaseが自動で生成するキー
-      sessionStorage.clear();
-
-      // 状態クリア
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
-
-      // ページリロードで完全リセット
-      window.location.href = "/admin/login";
-    } catch (err) {
-      console.error("Error during signOut:", err);
-    }
+    await supabase.auth.signOut();
+    setIsAdmin(false);
   };
 
   return (
