@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -6,8 +6,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useGallery } from '@/modules/gallery/hooks/useGallery';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { useGallery } from "@/modules/gallery/hooks/useGallery";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -23,8 +23,9 @@ const Gallery = () => {
           </h2>
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            美しい料理と落ち着いた空間<br />
-            apaiserlの魅力をご覧ください
+            美しい料理と落ち着いた空間
+            <br />
+            Apaiserlの魅力をご覧ください
           </p>
         </div>
 
@@ -48,7 +49,10 @@ const Gallery = () => {
                     {images.map((image) => {
                       const imageUrl = getImageUrl(image.file_path);
                       return (
-                        <CarouselItem key={image.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                        <CarouselItem
+                          key={image.id}
+                          className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+                        >
                           <div
                             className="group relative overflow-hidden cursor-pointer shadow-elegant hover:shadow-gold transition-smooth rounded-lg"
                             onClick={() => setSelectedImage(imageUrl)}
@@ -136,21 +140,12 @@ const Gallery = () => {
           </p>
           <div className="flex justify-center space-x-6">
             <a
-              href="https://instagram.com/apaiser_kyoto"
+              href="https://instagram.com/cafe_restaurant_apaiser"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 text-gold hover:text-gold-muted transition-smooth"
             >
               <span className="font-playfair">Instagram</span>
-              <div className="w-4 h-px bg-gold"></div>
-            </a>
-            <a
-              href="https://twitter.com/apaiser_kyoto"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 text-gold hover:text-gold-muted transition-smooth"
-            >
-              <span className="font-playfair">X (Twitter)</span>
               <div className="w-4 h-px bg-gold"></div>
             </a>
           </div>

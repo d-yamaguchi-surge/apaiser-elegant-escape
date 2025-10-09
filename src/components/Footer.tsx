@@ -8,7 +8,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-2">
             <h3 className="font-playfair text-3xl font-bold text-gradient-gold mb-4">
-              apaiser
+              Apaiser
             </h3>
             <p className="font-noto text-background/80 leading-relaxed mb-6 max-w-md">
               一皿ごとに、誇りを込めて。
@@ -17,20 +17,12 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://instagram.com/apaiser_kyoto"
+                href="https://instagram.com/cafe_restaurant_apaiser"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-background/60 hover:text-gold transition-smooth"
               >
                 <Instagram size={24} />
-              </a>
-              <a
-                href="https://twitter.com/apaiser_kyoto"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-background/60 hover:text-gold transition-smooth"
-              >
-                <Twitter size={24} />
               </a>
             </div>
           </div>
@@ -53,7 +45,7 @@ const Footer = () => {
                 <Mail className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    info@apaiser.jp
+                    info@restaurant-apaiser.com
                   </p>
                 </div>
               </div>
@@ -61,11 +53,9 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    〒602-8566
+                    〒320-0827
                     <br />
-                    栃木県宇都宮市花房
-                    <br />
-                    烏丸通今出川上ル
+                    栃木県宇都宮市花房3-3-34
                   </p>
                 </div>
               </div>
@@ -98,9 +88,9 @@ const Footer = () => {
                   </p>
                 </div>
               </div>
-              <p className="font-noto text-sm text-background/60">
+              {/* <p className="font-noto text-sm text-background/60">
                 定休日：火曜日
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
@@ -109,7 +99,7 @@ const Footer = () => {
         <div className="border-t border-background/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="font-noto text-sm text-background/60">
-              © 2025 apaiser. All rights reserved.
+              © 2025 Apaiser. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a

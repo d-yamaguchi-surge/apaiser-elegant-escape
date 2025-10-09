@@ -1,11 +1,17 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 const Reservation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,20 +20,23 @@ const Reservation = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     toast({
       title: "ご予約ありがとうございます",
       description: "お送りいただいた内容を確認の上、改めてご連絡いたします。",
     });
-    
+
     setIsSubmitting(false);
   };
 
   return (
-    <section id="reservation" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section
+      id="reservation"
+      className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30"
+    >
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -36,7 +45,8 @@ const Reservation = () => {
           </h2>
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            特別な時間をお過ごしいただくため<br />
+            特別な時間をお過ごしいただくため
+            <br />
             事前のご予約をおすすめしております
           </p>
         </div>
@@ -53,65 +63,83 @@ const Reservation = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="lastName"
+                      className="font-noto text-sm font-medium"
+                    >
                       お名前（姓）*
                     </Label>
-                    <Input 
-                      id="lastName" 
-                      required 
+                    <Input
+                      id="lastName"
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="firstName"
+                      className="font-noto text-sm font-medium"
+                    >
                       お名前（名）*
                     </Label>
-                    <Input 
-                      id="firstName" 
-                      required 
+                    <Input
+                      id="firstName"
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="phone"
+                    className="font-noto text-sm font-medium"
+                  >
                     お電話番号*
                   </Label>
-                  <Input 
-                    id="phone" 
-                    type="tel" 
-                    required 
+                  <Input
+                    id="phone"
+                    type="tel"
+                    required
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="email"
+                    className="font-noto text-sm font-medium"
+                  >
                     メールアドレス*
                   </Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    required 
+                  <Input
+                    id="email"
+                    type="email"
+                    required
                     className="border-gold/30 focus:border-gold transition-smooth"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="date"
+                      className="font-noto text-sm font-medium"
+                    >
                       ご希望日*
                     </Label>
-                    <Input 
-                      id="date" 
-                      type="date" 
-                      required 
+                    <Input
+                      id="date"
+                      type="date"
+                      required
                       className="border-gold/30 focus:border-gold transition-smooth"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="time" className="font-noto text-sm font-medium">
+                    <Label
+                      htmlFor="time"
+                      className="font-noto text-sm font-medium"
+                    >
                       ご希望時間*
                     </Label>
                     <Select required>
@@ -134,7 +162,10 @@ const Reservation = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="guests" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="guests"
+                    className="font-noto text-sm font-medium"
+                  >
                     人数*
                   </Label>
                   <Select required>
@@ -153,23 +184,26 @@ const Reservation = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="requests" className="font-noto text-sm font-medium">
+                  <Label
+                    htmlFor="requests"
+                    className="font-noto text-sm font-medium"
+                  >
                     ご要望・アレルギー等
                   </Label>
-                  <Textarea 
+                  <Textarea
                     id="requests"
                     placeholder="お誕生日のお祝い、アレルギー情報など、ご要望がございましたらお書きください"
                     className="border-gold/30 focus:border-gold transition-smooth resize-none h-24"
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   variant="gold"
                   className="w-full py-3"
                 >
-                  {isSubmitting ? '送信中...' : 'ご予約を送信'}
+                  {isSubmitting ? "送信中..." : "ご予約を送信"}
                 </Button>
               </form>
             </CardContent>
@@ -195,7 +229,7 @@ const Reservation = () => {
                 <div className="space-y-2 text-sm text-muted-foreground font-noto">
                   <p>ランチ：11:30〜15:00</p>
                   <p>ディナー：17:30〜22:00</p>
-                  <p>定休日：火曜日</p>
+                  {/* <p>定休日：火曜日</p> */}
                 </div>
               </CardContent>
             </Card>

@@ -1,42 +1,36 @@
-import { Clock, MapPin, Phone, Mail } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Clock, MapPin, Phone, Mail } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const StoreInfo = () => {
   const storeDetails = [
     {
       icon: <MapPin className="w-6 h-6" />,
-      title: 'アクセス',
+      title: "アクセス",
       content: [
-        '〒602-8566',
-        '栃木県宇都宮市花房烏丸通今出川上ル',
-        '地下鉄烏丸線「今出川駅」徒歩3分'
-      ]
+        "〒320-0827",
+        "栃木県宇都宮市花房3-3-34",
+        "東武宇都宮駅徒歩20分",
+      ],
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: '営業時間',
+      title: "営業時間",
       content: [
-        'ランチ：11:30〜15:00 (L.O. 14:30)',
-        'ディナー：17:30〜22:00 (L.O. 21:30)',
-        '定休日：火曜日'
-      ]
+        "ランチ：11:30〜15:00 (L.O. 14:30)",
+        "ディナー：17:30〜22:00 (L.O. 21:30)",
+        // "定休日：火曜日",
+      ],
     },
     {
       icon: <Phone className="w-6 h-6" />,
-      title: 'お電話',
-      content: [
-        '075-123-4567',
-        '※ご予約承ります'
-      ]
+      title: "お電話",
+      content: ["075-123-4567", "※ご予約承ります"],
     },
     {
       icon: <Mail className="w-6 h-6" />,
-      title: 'メール',
-      content: [
-        'info@apaiser.jp',
-        '※お問い合わせはこちらから'
-      ]
-    }
+      title: "メール",
+      content: ["info@restaurant-apaiser.com", "※お問い合わせはこちらから"],
+    },
   ];
 
   return (
@@ -49,7 +43,8 @@ const StoreInfo = () => {
           </h2>
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            宇都宮の静寂な空間で、心安らぐひとときを<br />
+            宇都宮の静寂な空間で、心安らぐひとときを
+            <br />
             皆さまのお越しをお待ちしております
           </p>
         </div>
@@ -58,19 +53,23 @@ const StoreInfo = () => {
           {/* Store Details */}
           <div className="space-y-6">
             {storeDetails.map((detail, index) => (
-              <Card key={index} className="border-gold/20 shadow-elegant bg-card">
+              <Card
+                key={index}
+                className="border-gold/20 shadow-elegant bg-card"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 text-gold">
-                      {detail.icon}
-                    </div>
+                    <div className="flex-shrink-0 text-gold">{detail.icon}</div>
                     <div className="flex-1">
                       <h3 className="font-noto text-lg font-bold text-foreground mb-3">
                         {detail.title}
                       </h3>
                       <div className="space-y-1">
                         {detail.content.map((line, lineIndex) => (
-                          <p key={lineIndex} className="font-noto text-sm text-muted-foreground">
+                          <p
+                            key={lineIndex}
+                            className="font-noto text-sm text-muted-foreground"
+                          >
                             {line}
                           </p>
                         ))}
@@ -101,15 +100,19 @@ const StoreInfo = () => {
                     className="rounded-lg"
                   />
                 </div>
-                
+
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center text-sm">
                     <div className="w-3 h-3 rounded-full bg-gold mr-3"></div>
-                    <span className="font-noto text-muted-foreground">JR宇都宮</span>
+                    <span className="font-noto text-muted-foreground">
+                      東武宇都宮駅
+                    </span>
                   </div>
                   <div className="flex items-center text-sm">
                     <div className="w-3 h-3 rounded-full bg-secondary mr-3"></div>
-                    <span className="font-noto text-muted-foreground">宇都宮駅まで徒歩1時間</span>
+                    <span className="font-noto text-muted-foreground">
+                      東武宇都宮駅から徒歩20分
+                    </span>
                   </div>
                 </div>
               </CardContent>
