@@ -24,7 +24,7 @@ const StoreInfo = () => {
     {
       icon: <Phone className="w-6 h-6" />,
       title: "お電話",
-      content: ["075-123-4567", "※ご予約承ります"],
+      content: ["028-666-6671", "※ご予約承ります"],
     },
     {
       icon: <Mail className="w-6 h-6" />,

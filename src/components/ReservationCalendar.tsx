@@ -12,7 +12,7 @@ import {
   addDays,
 } from "date-fns";
 import { ja } from "date-fns/locale";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReservations } from "@/modules/reservation/hooks/useReservations";
 import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
@@ -191,8 +191,12 @@ const ReservationCalendar = () => {
                 }
                 disableNavigation={false}
                 components={{
-                  IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
-                  IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />
+                  IconLeft: ({ ...props }) => (
+                    <ChevronLeft className="h-4 w-4" {...props} />
+                  ),
+                  IconRight: ({ ...props }) => (
+                    <ChevronRight className="h-4 w-4" {...props} />
+                  ),
                 }}
               />
             </CardContent>
@@ -266,7 +270,7 @@ const ReservationCalendar = () => {
                   お電話でのご予約
                 </h3>
                 <p className="font-playfair text-2xl font-bold text-gold mb-2">
-                  075-123-4567
+                  028-666-6671
                 </p>
                 <p className="font-noto text-sm text-muted-foreground">
                   営業時間内にお電話ください

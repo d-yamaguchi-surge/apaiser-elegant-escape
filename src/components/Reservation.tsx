@@ -220,7 +220,7 @@ const Reservation = () => {
               <CardContent className="text-center">
                 <div className="mb-6">
                   <p className="font-playfair text-3xl font-bold text-gold mb-2">
-                    075-123-4567
+                    028-666-6671
                   </p>
                   <p className="font-noto text-sm text-muted-foreground">
                     営業時間内にお電話ください
