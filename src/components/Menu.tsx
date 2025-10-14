@@ -1,37 +1,45 @@
-import dish1 from '@/assets/dish-1.jpg';
-import dish2 from '@/assets/dish-2.jpg';
-import dish3 from '@/assets/dish-3.jpg';
-import { Card, CardContent } from '@/components/ui/card';
+import dish1 from "@/assets/豚ロース.png";
+import dish2 from "@/assets/ボロネーゼ.png";
+import dish3 from "@/assets/モンブラン.png";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Menu = () => {
   const menuItems = [
     {
       id: 1,
-      name: 'シェフ特製コース',
-      nameEn: 'Chef\'s Special Course',
-      description: '季節の食材を活かした、シェフ渾身の特別コース。前菜からデザートまで、心を込めてお作りします。',
-      price: '¥8,800',
+      name: "シェフ特製コース",
+      nameEn: "Chef's Special Course",
+      description:
+        "季節の食材を活かした、シェフ渾身の特別コース。前菜からデザートまで、心を込めてお作りします。",
+      price: "¥5,000~¥10,000",
       image: dish1,
-      category: 'コース'
+      category: "コース",
     },
     {
       id: 2,
-      name: 'トリュフパスタ',
-      nameEn: 'Truffle Pasta',
-      description: '厳選されたトリュフをふんだんに使用した、贅沢なパスタ料理。芳醇な香りをお楽しみください。',
-      price: '¥3,200',
+      name: "ボロネーゼ",
+      nameEn: "Bolognese",
+      description: (
+        <>
+          国産和牛100％を2日かけて煮込んだ、贅沢なボロネーゼ。
+          <br />
+          コクのあるソースが生フェットチーネに絡み、豊かな香りと旨みが広がります。
+        </>
+      ),
+      price: "¥1,400",
       image: dish2,
-      category: 'パスタ'
+      category: "パスタ",
     },
     {
       id: 3,
-      name: '季節のデザート',
-      nameEn: 'Seasonal Dessert',
-      description: 'その時期の最高の素材で作る、芸術的なデザート。見た目にも美しい一品です。',
-      price: '¥1,800',
+      name: "季節のデザート",
+      nameEn: "Seasonal Dessert",
+      description:
+        "その時期の最高の素材で作る、芸術的なデザート。見た目にも美しい一品です。",
+      price: "¥800",
       image: dish3,
-      category: 'デザート'
-    }
+      category: "デザート",
+    },
   ];
 
   return (
@@ -44,7 +52,8 @@ const Menu = () => {
           </h2>
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-8"></div>
           <p className="font-noto text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            厳選された食材と、熟練の技術で作り上げる<br />
+            厳選された食材と、熟練の技術で作り上げる
+            <br />
             特別な料理の数々をご紹介いたします
           </p>
         </div>
@@ -52,10 +61,13 @@ const Menu = () => {
         {/* Menu Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {menuItems.map((item) => (
-            <Card key={item.id} className="group overflow-hidden shadow-elegant hover:shadow-gold transition-smooth border-0 bg-card">
+            <Card
+              key={item.id}
+              className="group overflow-hidden shadow-elegant hover:shadow-gold transition-smooth border-0 bg-card"
+            >
               <div className="relative overflow-hidden">
-                <img 
-                  src={item.image} 
+                <img
+                  src={item.image}
                   alt={item.name}
                   className="w-full h-64 object-cover group-hover:scale-105 transition-smooth"
                 />
@@ -65,7 +77,7 @@ const Menu = () => {
                   </span>
                 </div>
               </div>
-              
+
               <CardContent className="p-6">
                 <div className="mb-4">
                   <h3 className="font-noto text-xl font-bold text-foreground mb-1">
@@ -75,11 +87,11 @@ const Menu = () => {
                     {item.nameEn}
                   </p>
                 </div>
-                
+
                 <p className="font-noto text-sm text-muted-foreground leading-relaxed mb-6">
                   {item.description}
                 </p>
-                
+
                 <div className="flex justify-between items-center">
                   <span className="font-playfair text-2xl font-bold text-gold">
                     {item.price}
@@ -97,7 +109,10 @@ const Menu = () => {
             より詳細なメニューは店舗にてご確認ください
           </p>
           <div className="inline-block border-b border-gold pb-1">
-            <a href="#reservation" className="font-playfair text-gold hover:text-gold-muted transition-smooth">
+            <a
+              href="#reservation"
+              className="font-playfair text-gold hover:text-gold-muted transition-smooth"
+            >
               ご予約・お問い合わせ
             </a>
           </div>
