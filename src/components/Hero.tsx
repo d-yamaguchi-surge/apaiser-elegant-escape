@@ -1,4 +1,5 @@
 import heroImage from "@/assets/hero-image.jpg";
+import heroImage2 from "@/assets/S__7856181_0.jpg";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -10,7 +11,7 @@ const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src={heroImage}
+          src={heroImage2}
           alt="apaiser restaurant interior"
           className="w-full h-full object-cover"
         />
@@ -38,17 +39,6 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button
-              variant="gold"
-              size="lg"
-              onClick={() =>
-                document
-                  .getElementById("reservation")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              ご予約はこちら
-            </Button>
             <Button
               variant="elegant"
               size="lg"
