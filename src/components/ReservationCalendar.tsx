@@ -222,11 +222,7 @@ const ReservationCalendar = () => {
                       <p className="font-noto text-sm text-muted-foreground">
                         営業時間
                       </p>
-                      <p className="font-noto text-foreground">
-                        ランチ 11:30-15:00
-                        <br />
-                        ディナー 17:30-22:00
-                      </p>
+                      <p className="font-noto text-foreground">11:00-22:00</p>
                     </div>
                     <Button
                       onClick={handleReservation}

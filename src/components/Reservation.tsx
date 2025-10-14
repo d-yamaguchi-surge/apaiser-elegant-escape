@@ -227,8 +227,7 @@ const Reservation = () => {
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-muted-foreground font-noto">
-                  <p>ランチ：11:30〜15:00</p>
-                  <p>ディナー：17:30〜22:00</p>
+                  <p>11:00〜22:00</p>
                   {/* <p>定休日：火曜日</p> */}
                 </div>
               </CardContent>

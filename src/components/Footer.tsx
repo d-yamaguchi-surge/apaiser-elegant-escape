@@ -72,19 +72,7 @@ const Footer = () => {
                 <Clock className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    ランチ
-                    <br />
-                    11:30〜15:00 (L.O. 14:30)
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Clock className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
-                <div>
-                  <p className="font-noto text-sm text-background/80">
-                    ディナー
-                    <br />
-                    17:30〜22:00 (L.O. 21:30)
+                    11:00〜22:00 (L.O. 21:00)
                   </p>
                 </div>
               </div>
