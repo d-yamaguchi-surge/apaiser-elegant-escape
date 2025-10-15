@@ -1,6 +1,6 @@
-import dish1 from "@/assets/豚ロース.png";
-import dish2 from "@/assets/ボロネーゼ.png";
-import dish3 from "@/assets/モンブラン.png";
+import dish1 from "@/assets/dish1.png";
+import dish2 from "@/assets/dish2.png";
+import dish3 from "@/assets/dish3.png";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Menu = () => {
