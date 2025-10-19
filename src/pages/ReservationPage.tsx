@@ -50,8 +50,8 @@ const ReservationPage = () => {
   const { isAvailableForReservation, loading: availabilityLoading } = useReservationAvailability();
 
   useEffect(() => {
-    if (selectedDateParam && !availabilityLoading) {
-      // Check if the date from URL is available for reservation
+    if (!selectedDate && selectedDateParam && !availabilityLoading) {
+      // Check if the date from URL is available for reservation (only initialize once)
       const dateObj = new Date(selectedDateParam);
       if (isAvailableForReservation(dateObj)) {
         setSelectedDate(selectedDateParam);
@@ -65,7 +65,7 @@ const ReservationPage = () => {
         });
       }
     }
-  }, [selectedDateParam, availabilityLoading, isAvailableForReservation]);
+  }, [selectedDate, selectedDateParam, availabilityLoading, isAvailableForReservation]);
 
   useEffect(() => {
     // Set default course (table-only) when courses are loaded
