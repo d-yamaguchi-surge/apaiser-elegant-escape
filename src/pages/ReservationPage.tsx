@@ -47,7 +47,8 @@ const ReservationPage = () => {
   });
   const { toast } = useToast();
   const { courses } = useCourses();
-  const { isAvailableForReservation, loading: availabilityLoading } = useReservationAvailability();
+  const { isAvailableForReservation, loading: availabilityLoading } =
+    useReservationAvailability();
 
   useEffect(() => {
     if (!selectedDate && selectedDateParam && !availabilityLoading) {
@@ -58,14 +59,14 @@ const ReservationPage = () => {
       } else {
         // If date is not available, clear it
         setSelectedDate("");
-        toast({
-          title: "予約不可日",
-          description: "選択された日付は予約できません。別の日付を選択してください。",
-          variant: "destructive",
-        });
       }
     }
-  }, [selectedDate, selectedDateParam, availabilityLoading, isAvailableForReservation]);
+  }, [
+    selectedDate,
+    selectedDateParam,
+    availabilityLoading,
+    isAvailableForReservation,
+  ]);
 
   useEffect(() => {
     // Set default course (table-only) when courses are loaded
@@ -345,7 +346,9 @@ const ReservationPage = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={selectedDate ? new Date(selectedDate) : undefined}
+                          selected={
+                            selectedDate ? new Date(selectedDate) : undefined
+                          }
                           onSelect={(date) => {
                             if (date && isAvailableForReservation(date)) {
                               setSelectedDate(format(date, "yyyy-MM-dd"));
@@ -355,10 +358,27 @@ const ReservationPage = () => {
                           disabled={(date) => !isAvailableForReservation(date)}
                           fromDate={new Date()}
                           toDate={
-                            new Date(new Date().setMonth(new Date().getMonth() + 3))
+                            new Date(
+                              new Date().setMonth(new Date().getMonth() + 3)
+                            )
                           }
                           className="pointer-events-auto"
                           initialFocus
+                          modifiers={{
+                            selected: (date) =>
+                              selectedDate
+                                ? format(date, "yyyy-MM-dd") ===
+                                  format(selectedDate, "yyyy-MM-dd")
+                                : false,
+                            today: () => false,
+                          }}
+                          modifiersStyles={{
+                            selected: {
+                              backgroundColor: "hsl(var(--gold))",
+                              color: "white",
+                              fontWeight: "bold",
+                            },
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
