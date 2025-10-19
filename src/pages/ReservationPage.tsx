@@ -13,13 +13,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon } from "lucide-react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useCourses } from "@/modules/courses/hooks/useCourses";
+import { useReservationAvailability } from "@/hooks/useReservationAvailability";
+import { cn } from "@/lib/utils";
 
 const ReservationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,12 +47,25 @@ const ReservationPage = () => {
   });
   const { toast } = useToast();
   const { courses } = useCourses();
+  const { isAvailableForReservation, loading: availabilityLoading } = useReservationAvailability();
 
   useEffect(() => {
-    if (selectedDateParam) {
-      setSelectedDate(selectedDateParam);
+    if (selectedDateParam && !availabilityLoading) {
+      // Check if the date from URL is available for reservation
+      const dateObj = new Date(selectedDateParam);
+      if (isAvailableForReservation(dateObj)) {
+        setSelectedDate(selectedDateParam);
+      } else {
+        // If date is not available, clear it
+        setSelectedDate("");
+        toast({
+          title: "予約不可日",
+          description: "選択された日付は予約できません。別の日付を選択してください。",
+          variant: "destructive",
+        });
+      }
     }
-  }, [selectedDateParam]);
+  }, [selectedDateParam, availabilityLoading, isAvailableForReservation]);
 
   useEffect(() => {
     // Set default course (table-only) when courses are loaded
@@ -306,14 +327,41 @@ const ReservationPage = () => {
                     >
                       ご希望日*
                     </Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      required
-                      className="border-gold/30 focus:border-gold transition-smooth"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal border-gold/30 hover:border-gold transition-smooth",
+                            !selectedDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate
+                            ? formatDisplayDate(selectedDate)
+                            : "日付を選択"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate ? new Date(selectedDate) : undefined}
+                          onSelect={(date) => {
+                            if (date && isAvailableForReservation(date)) {
+                              setSelectedDate(format(date, "yyyy-MM-dd"));
+                            }
+                          }}
+                          locale={ja}
+                          disabled={(date) => !isAvailableForReservation(date)}
+                          fromDate={new Date()}
+                          toDate={
+                            new Date(new Date().setMonth(new Date().getMonth() + 3))
+                          }
+                          className="pointer-events-auto"
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-2">
                     <Label

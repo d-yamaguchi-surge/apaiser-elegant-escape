@@ -1,113 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import React from "react";
-import {
-  format,
-  isToday,
-  getDay,
-  isBefore,
-  startOfDay,
-  addDays,
-} from "date-fns";
+import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useReservations } from "@/modules/reservation/hooks/useReservations";
-import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
-import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
+import { useReservationAvailability } from "@/hooks/useReservationAvailability";
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
-  const {
-    reservationCounts,
-    loading: reservationLoading,
-    fetchAvailabilityData,
-  } = useReservations();
-  const { blockedDates, loading: blockedLoading } = useBlockedDates();
-  const {
-    recurringClosedDays,
-    periodClosures,
-    loading: businessLoading,
-    isReservationAvailable,
-  } = useBusinessDays();
-
-  const loading = reservationLoading || blockedLoading || businessLoading;
-
-  // Load availability data when component mounts or data changes
-  useEffect(() => {
-    const loadAvailabilityData = async () => {
-      if (loading) return;
-
-      const today = new Date();
-      const twoMonthsLater = new Date(
-        today.getFullYear(),
-        today.getMonth() + 2,
-        today.getDate()
-      );
-
-      // Fetch reservation data first
-      await fetchAvailabilityData(
-        format(today, "yyyy-MM-dd"),
-        format(twoMonthsLater, "yyyy-MM-dd")
-      );
-
-      // Check availability for each date in the next 2 months
-      const available = new Set<string>();
-      for (let i = 0; i < 90; i++) {
-        const checkDate = addDays(today, i);
-        try {
-          const isAvailable = await isReservationAvailable(checkDate);
-          if (isAvailable) {
-            available.add(format(checkDate, "yyyy-MM-dd"));
-          }
-        } catch (error) {
-          console.error(
-            `Error checking availability for ${format(
-              checkDate,
-              "yyyy-MM-dd"
-            )}:`,
-            error
-          );
-        }
-      }
-      setAvailableDates(available);
-    };
-
-    loadAvailabilityData();
-  }, [loading]); // Remove fetchAvailabilityData and isReservationAvailable dependencies to prevent loops
-
-  // Check if a date is blocked by admin
-  const isDateBlocked = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
-    return blockedDates.some((bd) => bd.blocked_date === dateString);
-  };
-
-  // Get blocked date reason
-  const getBlockedReason = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
-    const blockedDate = blockedDates.find(
-      (bd) => bd.blocked_date === dateString
-    );
-    return blockedDate?.reason;
-  };
-
-  // Check if a date is available for reservation (sync version)
-  const isAvailableForReservation = (date: Date) => {
-    const today = startOfDay(new Date());
-
-    // Not available if in the past
-    if (isBefore(date, today)) {
-      return false;
-    }
-
-    // Check if date is in the available dates set
-    const dateString = format(date, "yyyy-MM-dd");
-    return availableDates.has(dateString);
-  };
+  const { isAvailableForReservation } = useReservationAvailability();
 
   const handleDateSelect = (date: Date | undefined) => {
     // Only update selectedDate on user click, don't auto-update based on availability
