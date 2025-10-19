@@ -63,6 +63,7 @@ const BusinessCalendar = () => {
       selectedDate
         ? format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
         : false,
+    today: () => false,
   };
 
   const modifiersStyles = {
@@ -75,6 +76,10 @@ const BusinessCalendar = () => {
       backgroundColor: "hsl(var(--gold))",
       color: "white",
       fontWeight: "bold",
+    },
+    today: {
+      backgroundColor: "transparent",
+      color: "hsl(var(--foreground))",
     },
   };
 
