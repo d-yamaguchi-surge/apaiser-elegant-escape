@@ -216,6 +216,30 @@ export const useReservations = (filters?: ReservationFilters) => {
     }
   };
 
+  const updateReservationDetails = async (id: string, updates: Partial<Reservation>) => {
+    try {
+      const { error } = await supabase
+        .from('reservations')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      await fetchReservations();
+      toast({
+        title: '成功',
+        description: '予約情報を更新しました。',
+      });
+    } catch (error) {
+      console.error('Error updating reservation details:', error);
+      toast({
+        title: 'エラー',
+        description: '予約情報の更新に失敗しました。',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const addReservation = async (reservation: Omit<Reservation, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { error } = await supabase
@@ -256,6 +280,7 @@ export const useReservations = (filters?: ReservationFilters) => {
     reservationCounts,
     stats,
     updateReservationStatus,
+    updateReservationDetails,
     deleteReservation,
     addReservation,
     refetch: fetchReservations,

@@ -5,6 +5,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { ReservationFilters } from '@/components/admin/ReservationFilters';
 import { AddReservationDialog } from '@/components/admin/AddReservationDialog';
+import { EditReservationDialog } from '@/components/admin/EditReservationDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +21,7 @@ const statusConfig = {
 
 export default function AdminReservations() {
   const [filters, setFilters] = useState<FilterType>({});
-  const { reservations, loading, updateReservationStatus, deleteReservation, refetch } = useReservations(filters);
+  const { reservations, loading, updateReservationStatus, updateReservationDetails, deleteReservation, refetch } = useReservations(filters);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const handleFiltersChange = (newFilters: FilterType) => {
@@ -107,6 +108,10 @@ export default function AdminReservations() {
                         <SelectItem value="cancelled">キャンセル</SelectItem>
                       </SelectContent>
                     </Select>
+                    <EditReservationDialog
+                      reservation={reservation}
+                      onUpdate={updateReservationDetails}
+                    />
                     <Button 
                       variant="outline" 
                       size="sm" 
