@@ -357,29 +357,6 @@ const ReservationPage = () => {
                           toDate={
                             new Date(new Date().setMonth(new Date().getMonth() + 3))
                           }
-                          modifiers={{
-                            available: (date) => isAvailableForReservation(date),
-                            selected: (date) =>
-                              selectedDate
-                                ? format(date, "yyyy-MM-dd") === selectedDate
-                                : false,
-                            today: () => false,
-                          }}
-                          modifiersStyles={{
-                            available: {
-                              fontWeight: "bold",
-                              color: "hsl(var(--gold))",
-                            },
-                            selected: {
-                              backgroundColor: "hsl(var(--gold))",
-                              color: "white",
-                              fontWeight: "bold",
-                            },
-                            today: {
-                              backgroundColor: "transparent",
-                              color: "hsl(var(--foreground))",
-                            },
-                          }}
                           className="pointer-events-auto"
                           initialFocus
                         />
