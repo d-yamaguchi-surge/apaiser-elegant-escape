@@ -11,9 +11,9 @@ const Footer = () => {
               Apaiser
             </h3>
             <p className="font-noto text-background/80 leading-relaxed mb-6 max-w-md">
-              一皿ごとに、誇りを込めて。
+              フランス料理をカジュアルに。
               <br />
-              心を込めた料理と静寂な空間で、特別なひとときをお過ごしください。
+              フレンチはもちろん、イタリアンや多ジャンルの料理を楽しめます。
             </p>
             <div className="flex space-x-4">
               <a

@@ -27,15 +27,15 @@ const Hero = () => {
 
           {/* Main Catchphrase */}
           <p className="font-noto text-2xl md:text-4xl lg:text-5xl text-background/90 mb-12 leading-relaxed">
-            一皿ごとに、誇りを込めて。
+            フランス料理をカジュアルに。
           </p>
 
           <div className="w-24 h-px bg-gradient-gold mx-auto mb-12 animate-gold-shimmer"></div>
 
           <p className="font-noto text-lg md:text-xl text-background/80 mb-12 max-w-2xl mx-auto leading-relaxed">
-            心を込めた料理と、静寂な空間で
+            フレンチはもちろん、イタリアンや多ジャンルの料理を楽しめます。
             <br />
-            特別なひとときをお過ごしください
+            是非お気軽にお越しください。
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
