@@ -474,7 +474,7 @@ const AdminBusinessDays = () => {
                         .map((closure) => (
                           <TableRow key={closure.id}>
                             <TableCell className="font-medium">
-                              {format(new Date(closure.start_date), 'yyyy年M月d日', { locale: ja })}
+                              {format(new Date(`${closure.start_date}T00:00:00`), 'yyyy年M月d日', { locale: ja })}
                               {' ～ '}
                               {format(new Date(closure.end_date), 'yyyy年M月d日', { locale: ja })}
                             </TableCell>
@@ -613,7 +613,7 @@ const AdminBusinessDays = () => {
                         .map((blockedDate) => (
                           <TableRow key={blockedDate.id}>
                             <TableCell className="font-medium">
-                              {format(new Date(blockedDate.blocked_date), 'yyyy年M月d日 (EEEE)', { locale: ja })}
+                            {format(new Date(`${blockedDate.blocked_date}T00:00:00`), 'yyyy年M月d日 (EEEE)', { locale: ja })}
                             </TableCell>
                             <TableCell>
                               {blockedDate.reason || (
