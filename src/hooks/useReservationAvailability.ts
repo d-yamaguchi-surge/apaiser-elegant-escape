@@ -1,22 +1,9 @@
 import { useState, useEffect } from "react";
-import { format, isBefore, startOfDay, addDays } from "date-fns";
+import { isBefore, startOfDay, addDays } from "date-fns";
 import { useReservations } from "@/modules/reservation/hooks/useReservations";
 import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
 import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
-
-/** ローカル日付を "yyyy-MM-dd" に変換（タイムゾーン補正なし） */
-const toLocalDateString = (date: Date): string => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-};
-
-/** Supabase の DATE カラムは補正不要。timestamp の場合も日付部分だけ使用 */
-const normalizeDateString = (value: string): string => {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-  return value.split("T")[0];
-};
+import { toLocalDateString, normalizeDateString } from "@/lib/dateUtils";
 
 export const useReservationAvailability = () => {
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());

@@ -28,6 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCourses } from "@/modules/courses/hooks/useCourses";
 import { useReservationAvailability } from "@/hooks/useReservationAvailability";
 import { cn } from "@/lib/utils";
+import { toLocalDateString } from "@/lib/dateUtils";
 
 const ReservationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -351,7 +352,7 @@ const ReservationPage = () => {
                           }
                           onSelect={(date) => {
                             if (date && isAvailableForReservation(date)) {
-                              setSelectedDate(format(date, "yyyy-MM-dd"));
+                              setSelectedDate(toLocalDateString(date));
                             }
                           }}
                           locale={ja}
@@ -367,8 +368,7 @@ const ReservationPage = () => {
                           modifiers={{
                             selected: (date) =>
                               selectedDate
-                                ? format(date, "yyyy-MM-dd") ===
-                                  format(selectedDate, "yyyy-MM-dd")
+                                ? toLocalDateString(date) === selectedDate
                                 : false,
                             today: () => false,
                           }}

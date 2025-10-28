@@ -5,6 +5,7 @@ import { format, isToday, getDay, addDays, startOfDay } from "date-fns";
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
+import { toLocalDateString } from "@/lib/dateUtils";
 
 const BusinessCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -26,7 +27,7 @@ const BusinessCalendar = () => {
         const checkDate = addDays(today, i);
         const isOpen = await checkBusinessDay(checkDate);
         if (isOpen) {
-          businessDaySet.add(format(checkDate, "yyyy-MM-dd"));
+          businessDaySet.add(toLocalDateString(checkDate));
         }
       }
       setBusinessDays(businessDaySet);
@@ -37,7 +38,7 @@ const BusinessCalendar = () => {
 
   // Check if a date is a business day
   const isBusinessDaySync = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
+    const dateString = toLocalDateString(date);
     return businessDays.has(dateString);
   };
 
@@ -61,7 +62,7 @@ const BusinessCalendar = () => {
     closed: (date: Date) => !isBusinessDaySync(date),
     selected: (date: Date) =>
       selectedDate
-        ? format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+        ? toLocalDateString(date) === toLocalDateString(selectedDate)
         : false,
     today: () => false,
   };

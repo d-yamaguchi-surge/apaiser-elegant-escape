@@ -8,6 +8,7 @@ import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReservationAvailability } from "@/hooks/useReservationAvailability";
+import { toLocalDateString } from "@/lib/dateUtils";
 
 const ReservationCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -26,7 +27,7 @@ const ReservationCalendar = () => {
 
   const handleReservation = () => {
     if (selectedDate) {
-      navigate(`/reservation?date=${format(selectedDate, "yyyy-MM-dd")}`);
+      navigate(`/reservation?date=${toLocalDateString(selectedDate)}`);
       window.scrollTo(0, 0);
     }
   };
@@ -35,7 +36,7 @@ const ReservationCalendar = () => {
     unavailable: (date: Date) => !isAvailableForReservation(date),
     selected: (date: Date) =>
       selectedDate
-        ? format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+        ? toLocalDateString(date) === toLocalDateString(selectedDate)
         : false,
     today: () => false,
   };

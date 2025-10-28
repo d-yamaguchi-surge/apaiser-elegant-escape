@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { format, parse } from "date-fns";
 import { ja } from 'date-fns/locale';
 import { Calendar, Trash2, Plus, Clock, CalendarDays, Settings } from 'lucide-react';
+import { toLocalDateString } from '@/lib/dateUtils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,7 +70,7 @@ const AdminBusinessDays = () => {
     setIsSubmitting(true);
     try {
       await addBlockedDate({
-        blocked_date: format(selectedDate, 'yyyy-MM-dd'),
+        blocked_date: toLocalDateString(selectedDate),
         reason: reason.trim() || null,
       });
       setSelectedDate(undefined);
@@ -168,8 +169,8 @@ const AdminBusinessDays = () => {
     setIsSubmittingPeriod(true);
     try {
       await addPeriodClosure({
-        start_date: format(startDate, 'yyyy-MM-dd'),
-        end_date: format(endDate, 'yyyy-MM-dd'),
+        start_date: toLocalDateString(startDate),
+        end_date: toLocalDateString(endDate),
         reason: periodReason.trim(),
         is_active: true,
       });
@@ -544,7 +545,7 @@ const AdminBusinessDays = () => {
                             today.setHours(0, 0, 0, 0);
                             if (date < today) return true;
                             
-                            const dateString = format(date, 'yyyy-MM-dd');
+                            const dateString = toLocalDateString(date);
                             return blockedDates.some(bd => bd.blocked_date === dateString);
                           }}
                         />
