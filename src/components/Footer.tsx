@@ -55,7 +55,7 @@ const Footer = () => {
                   <p className="font-noto text-sm text-background/80">
                     〒320-0827
                     <br />
-                    栃木県宇都宮市花房3-3-34
+                    栃木県宇都宮市花房3-3-44
                   </p>
                 </div>
               </div>
