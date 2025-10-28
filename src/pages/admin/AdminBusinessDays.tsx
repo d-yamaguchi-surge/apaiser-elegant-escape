@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { format, parse } from "date-fns";
 import { ja } from 'date-fns/locale';
 import { Calendar, Trash2, Plus, Clock, CalendarDays, Settings } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -474,9 +474,9 @@ const AdminBusinessDays = () => {
                         .map((closure) => (
                           <TableRow key={closure.id}>
                             <TableCell className="font-medium">
-                              {format(new Date(`${closure.start_date}T00:00:00`), 'yyyy年M月d日', { locale: ja })}
+                              {format(parse(closure.start_date, 'yyyy-MM-dd', new Date()), 'yyyy年M月d日', { locale: ja })}
                               {' ～ '}
-                              {format(new Date(closure.end_date), 'yyyy年M月d日', { locale: ja })}
+                              {format(parse(closure.end_date, 'yyyy-MM-dd', new Date()), 'yyyy年M月d日', { locale: ja })}
                             </TableCell>
                             <TableCell>{closure.reason}</TableCell>
                             <TableCell className="text-sm text-muted-foreground">
@@ -609,11 +609,15 @@ const AdminBusinessDays = () => {
                     </TableHeader>
                     <TableBody>
                       {blockedDates
-                        .sort((a, b) => new Date(a.blocked_date).getTime() - new Date(b.blocked_date).getTime())
+                        .sort(
+                          (a, b) =>
+                            parse(a.blocked_date, 'yyyy-MM-dd', new Date()).getTime() -
+                            parse(b.blocked_date, 'yyyy-MM-dd', new Date()).getTime()
+                        )
                         .map((blockedDate) => (
                           <TableRow key={blockedDate.id}>
                             <TableCell className="font-medium">
-                            {format(new Date(`${blockedDate.blocked_date}T00:00:00`), 'yyyy年M月d日 (EEEE)', { locale: ja })}
+                              {format(parse(blockedDate.blocked_date, 'yyyy-MM-dd', new Date()), 'yyyy年M月d日 (EEEE)', { locale: ja })}
                             </TableCell>
                             <TableCell>
                               {blockedDate.reason || (
