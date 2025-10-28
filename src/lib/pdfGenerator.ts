@@ -1,66 +1,103 @@
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Reservation } from '@/modules/reservation/hooks/useReservations';
 
 export const generateTodayReservationsPDF = (reservations: Reservation[]) => {
-  const doc = new jsPDF();
-  
-  // Logo (placeholder - you can add the actual logo later)
-  doc.setFontSize(20);
-  doc.text('Apaiser Restaurant', 20, 30);
-  
-  // Title and date
-  doc.setFontSize(16);
+  // Create a printable HTML document
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert('ポップアップがブロックされました。ポップアップを許可してください。');
+    return;
+  }
+
   const today = new Date().toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
-  doc.text(`本日の予約一覧 - ${today}`, 20, 50);
-  
-  // Prepare table data
-  const tableData = reservations.map(reservation => [
-    reservation.customer_name,
-    `${reservation.party_size}名`,
-    reservation.reservation_time.slice(0, 5), // HH:MM format
-    reservation.customer_phone || '-',
-    reservation.customer_email,
-    reservation.special_requests || '-'
-  ]);
-  
-  // Generate table
-  autoTable(doc, {
-    head: [['氏名', '人数', '時間', '電話', 'メール', '備考']],
-    body: tableData,
-    startY: 70,
-    styles: {
-      font: 'helvetica',
-      fontSize: 10,
-      cellPadding: 3,
-    },
-    headStyles: {
-      fillColor: [200, 200, 200],
-      textColor: [0, 0, 0],
-      fontStyle: 'bold',
-    },
-    columnStyles: {
-      0: { cellWidth: 25 }, // 氏名
-      1: { cellWidth: 15 }, // 人数
-      2: { cellWidth: 20 }, // 時間
-      3: { cellWidth: 30 }, // 電話
-      4: { cellWidth: 50 }, // メール
-      5: { cellWidth: 'auto' }, // 備考
-    },
-  });
-  
-  // Calculate total guests
+
   const totalGuests = reservations.reduce((sum, reservation) => sum + reservation.party_size, 0);
-  
-  // Add footer with total
-  const finalY = (doc as any).lastAutoTable?.finalY || 70;
-  doc.setFontSize(12);
-  doc.text(`合計：${totalGuests}名`, 20, finalY + 20);
-  
-  // Save the PDF
-  doc.save(`本日の予約一覧_${new Date().toISOString().split('T')[0]}.pdf`);
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>本日の予約一覧 - ${today}</title>
+        <style>
+          @media print {
+            @page { margin: 2cm; }
+            body { margin: 0; }
+          }
+          body {
+            font-family: 'MS Gothic', 'Hiragino Kaku Gothic Pro', sans-serif;
+            padding: 20px;
+            color: #000;
+          }
+          h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+          }
+          h2 {
+            font-size: 16px;
+            margin-bottom: 20px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background-color: #ddd;
+            font-weight: bold;
+          }
+          .total {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Apaiser Restaurant</h1>
+        <h2>本日の予約一覧 - ${today}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>氏名</th>
+              <th>人数</th>
+              <th>時間</th>
+              <th>電話</th>
+              <th>メール</th>
+              <th>備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${reservations.map(reservation => `
+              <tr>
+                <td>${reservation.customer_name}</td>
+                <td>${reservation.party_size}名</td>
+                <td>${reservation.reservation_time.slice(0, 5)}</td>
+                <td>${reservation.customer_phone || '-'}</td>
+                <td>${reservation.customer_email}</td>
+                <td>${reservation.special_requests || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div class="total">合計：${totalGuests}名</div>
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+    </html>
+  `;
+
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
 };

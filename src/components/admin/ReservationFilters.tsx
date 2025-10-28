@@ -31,7 +31,7 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
   });
   const [status, setStatus] = useState<string>(currentFilters.status || 'all');
 
-  const handleQuickRange = (rangeType: 'today' | 'thisWeek' | 'thisMonth' | 'thisYear' | 'all') => {
+  const handleQuickRange = (rangeType: 'today' | 'thisWeek' | 'thisMonth' | 'thisYear') => {
     const now = new Date();
     let newRange: DateRange | undefined;
 
@@ -47,9 +47,6 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
         break;
       case 'thisYear':
         newRange = { from: startOfYear(now), to: endOfYear(now) };
-        break;
-      case 'all':
-        newRange = undefined;
         break;
     }
 
@@ -185,14 +182,6 @@ export const ReservationFilters = ({ onFiltersChange, currentFilters }: Reservat
           className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
         >
           今年
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleQuickRange('all')}
-          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-        >
-          全期間
         </Button>
       </div>
     </div>
