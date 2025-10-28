@@ -5,7 +5,8 @@ import { format, isToday, getDay, addDays, startOfDay } from "date-fns";
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
-import { toLocalDateString } from "@/lib/dateUtils";
+import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
+import { toLocalDateString, normalizeDateString } from "@/lib/dateUtils";
 
 const BusinessCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -13,11 +14,12 @@ const BusinessCalendar = () => {
   );
   const [businessDays, setBusinessDays] = useState<Set<string>>(new Set());
   const { loading, isBusinessDay: checkBusinessDay } = useBusinessDays();
+  const { blockedDates, loading: blockedLoading } = useBlockedDates();
 
   // Load business day data
   useEffect(() => {
     const loadBusinessDays = async () => {
-      if (loading) return;
+      if (loading || blockedLoading) return;
 
       const today = new Date();
       const businessDaySet = new Set<string>();
@@ -25,16 +27,23 @@ const BusinessCalendar = () => {
       // Check next 3 months
       for (let i = 0; i < 90; i++) {
         const checkDate = addDays(today, i);
+        const dateString = toLocalDateString(checkDate);
         const isOpen = await checkBusinessDay(checkDate);
-        if (isOpen) {
-          businessDaySet.add(toLocalDateString(checkDate));
+        
+        // Check if the date is blocked
+        const isBlocked = blockedDates.some(
+          (bd) => normalizeDateString(bd.blocked_date) === dateString
+        );
+        
+        if (isOpen && !isBlocked) {
+          businessDaySet.add(dateString);
         }
       }
       setBusinessDays(businessDaySet);
     };
 
     loadBusinessDays();
-  }, [checkBusinessDay, loading]);
+  }, [checkBusinessDay, loading, blockedDates, blockedLoading]);
 
   // Check if a date is a business day
   const isBusinessDaySync = (date: Date) => {
@@ -46,6 +55,15 @@ const BusinessCalendar = () => {
     if (!date) return "";
 
     if (!isBusinessDaySync(date)) {
+      const dateString = toLocalDateString(date);
+      const blockedDate = blockedDates.find(
+        (bd) => normalizeDateString(bd.blocked_date) === dateString
+      );
+      
+      if (blockedDate) {
+        return blockedDate.reason || "予約不可日";
+      }
+      
       return "休業日";
     }
 
