@@ -1,58 +1,55 @@
 import { useState, useEffect } from "react";
-import { format, isBefore, startOfDay, addDays } from "date-fns";
+import { isBefore, startOfDay, addDays } from "date-fns";
 import { useReservations } from "@/modules/reservation/hooks/useReservations";
 import { useBlockedDates } from "@/modules/blockedDates/hooks/useBlockedDates";
 import { useBusinessDays } from "@/modules/businessDays/hooks/useBusinessDays";
 
+/** ✅ JSTローカル日付を正しく文字列化する */
+const toLocalDateString = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+/** ✅ SupabaseのUTC→JST変換 */
+const toJstString = (utcDateString: string): string => {
+  // "2025-11-08" または "2025-11-08T00:00:00Z" の両方を安全に処理
+  const utc = new Date(`${utcDateString}T00:00:00Z`);
+  const jst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+  return toLocalDateString(jst);
+};
+
 export const useReservationAvailability = () => {
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
-  const {
-    fetchAvailabilityData,
-    loading: reservationLoading,
-  } = useReservations();
+  const { fetchAvailabilityData, loading: reservationLoading } = useReservations();
   const { blockedDates, loading: blockedLoading } = useBlockedDates();
-  const {
-    loading: businessLoading,
-    isReservationAvailable,
-  } = useBusinessDays();
+  const { loading: businessLoading, isReservationAvailable } = useBusinessDays();
 
   const loading = reservationLoading || blockedLoading || businessLoading;
 
-  // Load availability data
   useEffect(() => {
     const loadAvailabilityData = async () => {
       if (loading) return;
 
       const today = new Date();
-      const twoMonthsLater = new Date(
-        today.getFullYear(),
-        today.getMonth() + 2,
-        today.getDate()
-      );
+      const twoMonthsLater = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
 
-      // Fetch reservation data first
       await fetchAvailabilityData(
-        format(today, "yyyy-MM-dd"),
-        format(twoMonthsLater, "yyyy-MM-dd")
+        toLocalDateString(today),
+        toLocalDateString(twoMonthsLater)
       );
 
-      // Check availability for each date in the next 2 months
       const available = new Set<string>();
       for (let i = 0; i < 90; i++) {
         const checkDate = addDays(today, i);
         try {
           const isAvailable = await isReservationAvailable(checkDate);
           if (isAvailable) {
-            available.add(format(checkDate, "yyyy-MM-dd"));
+            available.add(toLocalDateString(checkDate)); // ✅ format() ではなく toLocalDateString()
           }
         } catch (error) {
-          console.error(
-            `Error checking availability for ${format(
-              checkDate,
-              "yyyy-MM-dd"
-            )}:`,
-            error
-          );
+          console.error(`Error checking availability for ${toLocalDateString(checkDate)}:`, error);
         }
       }
       setAvailableDates(available);
@@ -61,33 +58,28 @@ export const useReservationAvailability = () => {
     loadAvailabilityData();
   }, [loading]);
 
-  // Check if a date is blocked by admin
+  /** ✅ 予約不可日チェック（UTC→JST補正） */
   const isDateBlocked = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
-    return blockedDates.some((bd) => bd.blocked_date === dateString);
+    const dateString = toLocalDateString(date);
+    return blockedDates.some((bd) => toJstString(bd.blocked_date) === dateString);
   };
 
-  // Get blocked date reason
+  /** ✅ 予約不可理由取得（UTC→JST補正） */
   const getBlockedReason = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
+    const dateString = toLocalDateString(date);
     const blockedDate = blockedDates.find(
-      (bd) => bd.blocked_date === dateString
+      (bd) => toJstString(bd.blocked_date) === dateString
     );
     return blockedDate?.reason;
   };
 
-  // Check if a date is available for reservation
+  /** ✅ 予約可否判定（ズレ防止済） */
   const isAvailableForReservation = (date: Date) => {
     const today = startOfDay(new Date());
+    if (isBefore(date, today)) return false;
 
-    // Not available if in the past
-    if (isBefore(date, today)) {
-      return false;
-    }
-
-    // Check if date is in the available dates set
-    const dateString = format(date, "yyyy-MM-dd");
-    return availableDates.has(dateString);
+    const dateString = toLocalDateString(date);
+    return availableDates.has(dateString) && !isDateBlocked(date);
   };
 
   return {
