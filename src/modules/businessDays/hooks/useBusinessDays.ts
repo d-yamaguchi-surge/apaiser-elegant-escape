@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { toLocalDateString } from '@/lib/dateUtils';
 
 export interface RecurringClosedDay {
   id: string;
@@ -187,7 +188,7 @@ export const useBusinessDays = () => {
   const isBusinessDay = async (date: Date): Promise<boolean> => {
     try {
       const { data, error } = await supabase.rpc('is_business_day', {
-        check_date: date.toISOString().split('T')[0]
+        check_date: toLocalDateString(date)
       });
 
       if (error) throw error;
@@ -202,7 +203,7 @@ export const useBusinessDays = () => {
   const isReservationAvailable = async (date: Date): Promise<boolean> => {
     try {
       const { data, error } = await supabase.rpc('is_reservation_available', {
-        check_date: date.toISOString().split('T')[0]
+        check_date: toLocalDateString(date)
       });
 
       if (error) throw error;
