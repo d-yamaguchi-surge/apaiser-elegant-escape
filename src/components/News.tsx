@@ -50,7 +50,7 @@ const News = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="font-noto text-muted-foreground text-sm leading-relaxed">
+                    <p className="font-noto text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
                       {item.content}
                     </p>
                   </CardContent>

@@ -318,10 +318,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_business_day: {
-        Args: { check_date: string }
-        Returns: boolean
-      }
+      is_business_day: { Args: { check_date: string }; Returns: boolean }
       is_reservation_available: {
         Args: { check_date: string }
         Returns: boolean
