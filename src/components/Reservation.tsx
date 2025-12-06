@@ -150,12 +150,19 @@ const Reservation = () => {
                         <SelectItem value="11:30">11:30</SelectItem>
                         <SelectItem value="12:00">12:00</SelectItem>
                         <SelectItem value="12:30">12:30</SelectItem>
+                        <SelectItem value="13:00">13:00</SelectItem>
+                        <SelectItem value="13:30">13:30</SelectItem>
+                        <SelectItem value="14:00">14:00</SelectItem>
+                        <SelectItem value="17:00">17:00</SelectItem>
                         <SelectItem value="17:30">17:30</SelectItem>
                         <SelectItem value="18:00">18:00</SelectItem>
                         <SelectItem value="18:30">18:30</SelectItem>
                         <SelectItem value="19:00">19:00</SelectItem>
                         <SelectItem value="19:30">19:30</SelectItem>
                         <SelectItem value="20:00">20:00</SelectItem>
+                        <SelectItem value="20:30">20:30</SelectItem>
+                        <SelectItem value="21:00">21:00</SelectItem>
+                        <SelectItem value="21:30">21:30</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -227,8 +234,7 @@ const Reservation = () => {
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-muted-foreground font-noto">
-                  <p>11:00〜22:00</p>
-                  {/* <p>定休日：火曜日</p> */}
+                  <p>11:30〜15:00 / 17:00〜22:00</p>
                 </div>
               </CardContent>
             </Card>
