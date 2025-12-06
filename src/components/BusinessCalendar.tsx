@@ -70,10 +70,10 @@ const BusinessCalendar = () => {
     const day = getDay(date);
     if (day === 0 || day === 6) {
       // Sunday or Saturday
-      return "11:00-22:00";
+      return "11:30~15:00 / 17:00~22:00(L.O. 21:30)";
     }
 
-    return "11:00-22:00";
+    return "11:30~15:00 / 17:00~22:00(L.O. 21:30)";
   };
 
   const modifiers = {

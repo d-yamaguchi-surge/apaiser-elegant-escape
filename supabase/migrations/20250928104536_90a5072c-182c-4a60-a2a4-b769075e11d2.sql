@@ -127,5 +127,5 @@ $$;
 
 -- 初期データ挿入（デフォルト設定）
 INSERT INTO public.business_settings (setting_key, setting_value, description) VALUES
-('default_business_hours', '11:00-22:00', 'デフォルト営業時間'),
+('default_business_hours', '11:30-22:00', 'デフォルト営業時間'),
 ('max_advance_reservation_days', '30', '最大予約可能日数（日前）');
