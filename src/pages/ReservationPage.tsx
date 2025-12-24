@@ -47,15 +47,34 @@ const ReservationPage = () => {
     requests: "",
   });
   const { toast } = useToast();
+
+  const isWithinThreeDaysFromToday = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const target = new Date(date);
+    target.setHours(0, 0, 0, 0);
+  
+    const diffDays =
+      (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+  
+    return diffDays >= 0 && diffDays < 3;
+  };
+
   const { courses } = useCourses();
   const { isAvailableForReservation, loading: availabilityLoading } =
     useReservationAvailability();
+
+  const isReservableDate = (date: Date) => {
+    if (isWithinThreeDaysFromToday(date)) return false;
+    return isAvailableForReservation(date);
+  };
 
   useEffect(() => {
     if (!selectedDate && selectedDateParam && !availabilityLoading) {
       // Check if the date from URL is available for reservation (only initialize once)
       const dateObj = new Date(selectedDateParam);
-      if (isAvailableForReservation(dateObj)) {
+      if (isReservableDate(dateObj)) {
         setSelectedDate(selectedDateParam);
       } else {
         // If date is not available, clear it
@@ -351,12 +370,12 @@ const ReservationPage = () => {
                             selectedDate ? new Date(selectedDate) : undefined
                           }
                           onSelect={(date) => {
-                            if (date && isAvailableForReservation(date)) {
+                            if (date && isReservableDate(date)) {
                               setSelectedDate(toLocalDateString(date));
                             }
                           }}
+                          disabled={(date) => !isReservableDate(date)}
                           locale={ja}
-                          disabled={(date) => !isAvailableForReservation(date)}
                           fromDate={new Date()}
                           toDate={
                             new Date(
@@ -416,7 +435,6 @@ const ReservationPage = () => {
                         <SelectItem value="20:00">20:00</SelectItem>
                         <SelectItem value="20:30">20:30</SelectItem>
                         <SelectItem value="21:00">21:00</SelectItem>
-                        <SelectItem value="21:30">21:30</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

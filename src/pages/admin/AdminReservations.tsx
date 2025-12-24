@@ -102,7 +102,7 @@ export default function AdminReservations() {
                       <SelectTrigger className="w-32">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper">
                         <SelectItem value="pending">承認待ち</SelectItem>
                         <SelectItem value="approved">承認済み</SelectItem>
                         <SelectItem value="cancelled">キャンセル</SelectItem>

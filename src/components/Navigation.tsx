@@ -16,7 +16,7 @@ const Navigation = () => {
     { name: "ホーム", to: "/#home" }, // ← 先頭アンカーに移動
     { name: "メニュー", to: "/#menu" }, // ← トップ内セクション
     { name: "店舗情報", to: "/#info" }, // ← トップ内セクション
-    { name: "予約", to: "/#reservation" }, // ← 別ページ（フォーム）
+    { name: "予約", to: "/#reservation" }, // ← トップ内セクション
     { name: "ギャラリー", to: "/#gallery" }, // ← トップ内セクション
   ];
 

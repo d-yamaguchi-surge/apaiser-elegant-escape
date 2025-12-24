@@ -9,21 +9,61 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReservationAvailability } from "@/hooks/useReservationAvailability";
 import { toLocalDateString } from "@/lib/dateUtils";
+import { useEffect } from "react";
 
 const ReservationCalendar = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const navigate = useNavigate();
+  const isWithinThreeDaysFromToday = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const target = new Date(date);
+    target.setHours(0, 0, 0, 0);
+  
+    const diffDays =
+      (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+  
+    return diffDays >= 0 && diffDays < 3;
+  };
+
   const { isAvailableForReservation } = useReservationAvailability();
+  const isReservableDate = (date: Date) => {
+    if (isWithinThreeDaysFromToday(date)) return false;
+    return isAvailableForReservation(date);
+  };
 
   const handleDateSelect = (date: Date | undefined) => {
-    // Only update selectedDate on user click, don't auto-update based on availability
-    if (date && isAvailableForReservation(date)) {
+    if (date && isReservableDate(date)) {
       setSelectedDate(date);
-    } else if (date && !isAvailableForReservation(date)) {
-      // Clear selection if user clicks unavailable date
+    } else {
       setSelectedDate(undefined);
     }
   };
+
+  const getFirstReservableDate = () => {
+    const base = new Date();
+    base.setHours(0, 0, 0, 0);
+  
+    for (let i = 3; i <= 90; i++) {
+      const candidate = new Date(base);
+      candidate.setDate(base.getDate() + i);
+  
+      if (isReservableDate(candidate)) {
+        return candidate;
+      }
+    }
+  
+    return undefined;
+  };
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  useEffect(() => {
+    if (selectedDate) return;
+
+    const firstDate = getFirstReservableDate();
+    if (firstDate) {
+      setSelectedDate(firstDate);
+    }
+  }, [selectedDate, isAvailableForReservation]);
+  const navigate = useNavigate();
 
   const handleReservation = () => {
     if (selectedDate) {
@@ -33,7 +73,7 @@ const ReservationCalendar = () => {
   };
 
   const modifiers = {
-    unavailable: (date: Date) => !isAvailableForReservation(date),
+    unavailable: (date: Date) => !isReservableDate(date),
     selected: (date: Date) =>
       selectedDate
         ? toLocalDateString(date) === toLocalDateString(selectedDate)
@@ -95,7 +135,7 @@ const ReservationCalendar = () => {
                 modifiers={modifiers}
                 modifiersStyles={modifiersStyles}
                 className="rounded-md border-gold/20"
-                disabled={(date) => !isAvailableForReservation(date)}
+                disabled={(date) => !isReservableDate(date)}
                 fromDate={new Date()}
                 toDate={
                   new Date(new Date().setMonth(new Date().getMonth() + 3))
@@ -164,7 +204,7 @@ const ReservationCalendar = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-muted rounded"></div>
-                    <span>予約不可</span>
+                    <span>予約不可（本日を含む3日間は電話予約のみ）</span>
                   </div>
                 </div>
               </CardContent>
