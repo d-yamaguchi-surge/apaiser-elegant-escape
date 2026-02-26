@@ -82,7 +82,7 @@ const NewsPage = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="font-noto text-muted-foreground leading-relaxed whitespace-pre-line">
+                      <p className="font-noto text-muted-foreground leading-relaxed whitespace-pre-line break-all overflow-hidden">
                         {item.content}
                       </p>
                     </CardContent>
