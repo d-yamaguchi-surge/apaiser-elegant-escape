@@ -45,7 +45,7 @@ const Footer = () => {
                 <Mail className="w-4 h-4 mt-1 text-gold flex-shrink-0" />
                 <div>
                   <p className="font-noto text-sm text-background/80">
-                    info@restaurant-apaiser.com
+                    cafe.restaurant.apaiser@gmail.com
                   </p>
                 </div>
               </div>
@@ -75,7 +75,7 @@ const Footer = () => {
                     11:30〜15:00
                   </p>
                   <p className="font-noto text-sm text-background/80">
-                  17:00〜22:00(L.O. 21:30)
+                  17:30〜22:00(L.O. 21:30)
                   </p>
                 </div>
               </div>
