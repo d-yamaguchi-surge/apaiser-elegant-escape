@@ -153,7 +153,6 @@ const Reservation = () => {
                         <SelectItem value="13:00">13:00</SelectItem>
                         <SelectItem value="13:30">13:30</SelectItem>
                         <SelectItem value="14:00">14:00</SelectItem>
-                        <SelectItem value="17:00">17:00</SelectItem>
                         <SelectItem value="17:30">17:30</SelectItem>
                         <SelectItem value="18:00">18:00</SelectItem>
                         <SelectItem value="18:30">18:30</SelectItem>
@@ -234,7 +233,7 @@ const Reservation = () => {
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-muted-foreground font-noto">
-                  <p>11:30〜15:00 / 17:00〜22:00</p>
+                  <p>11:30〜15:00 / 17:30〜22:00</p>
                 </div>
               </CardContent>
             </Card>

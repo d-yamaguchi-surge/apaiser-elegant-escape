@@ -173,7 +173,7 @@ const ReservationCalendar = () => {
                       <p className="font-noto text-sm text-muted-foreground">
                         営業時間
                       </p>
-                      <p className="font-noto text-foreground">11:30~15:00 / 17:00~22:00(L.O. 21:30)</p>
+                      <p className="font-noto text-foreground">11:30~15:00 / 17:30~22:00(L.O. 21:30)</p>
                     </div>
                     <Button
                       onClick={handleReservation}

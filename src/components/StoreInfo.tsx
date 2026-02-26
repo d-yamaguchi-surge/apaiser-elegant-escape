@@ -16,7 +16,7 @@ const StoreInfo = () => {
       icon: <Clock className="w-6 h-6" />,
       title: "営業時間",
       content: [
-        "11:30〜15:00 / 17:00〜22:00(L.O. 21:30)",
+        "11:30〜15:00 / 17:30〜22:00(L.O. 21:30)",
       ],
     },
     {
@@ -27,7 +27,7 @@ const StoreInfo = () => {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "メール",
-      content: ["info@restaurant-apaiser.com", "※お問い合わせはこちらから"],
+      content: ["cafe.restaurant.apaiser@gmail.com", "※お問い合わせはこちらから"],
     },
   ];
 
