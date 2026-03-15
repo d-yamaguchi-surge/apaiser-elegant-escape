@@ -194,6 +194,7 @@ const AdminBusinessDays = () => {
   }
 
   return (
+    <AdminLayout>
     <div className="space-y-8">
       <div>
         <h1 className="font-playfair text-3xl font-bold text-foreground mb-2">
