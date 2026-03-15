@@ -16,7 +16,7 @@ const Index = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
         <p className="text-white text-xl md:text-2xl lg:text-3xl font-noto leading-relaxed mb-8">
-          当サイトは2026年3月末で終了しました
+          当サイトは終了しました
         </p>
         <p className="text-white text-base md:text-lg font-noto mb-2">
           切り替わらない方はこちら
