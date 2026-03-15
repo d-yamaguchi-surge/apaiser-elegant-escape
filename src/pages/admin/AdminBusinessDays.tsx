@@ -20,6 +20,7 @@ import { useBlockedDates } from '@/modules/blockedDates/hooks/useBlockedDates';
 import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { AdminLayout } from '@/components/admin/AdminLayout';
 
 const dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
 
