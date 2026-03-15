@@ -20,6 +20,7 @@ import { useBlockedDates } from '@/modules/blockedDates/hooks/useBlockedDates';
 import { useBusinessDays } from '@/modules/businessDays/hooks/useBusinessDays';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { AdminLayout } from '@/components/admin/AdminLayout';
 
 const dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -189,10 +190,11 @@ const AdminBusinessDays = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <AdminLayout><LoadingSpinner /></AdminLayout>;
   }
 
   return (
+    <AdminLayout>
     <div className="space-y-8">
       <div>
         <h1 className="font-playfair text-3xl font-bold text-foreground mb-2">
@@ -660,6 +662,7 @@ const AdminBusinessDays = () => {
         cancelText="キャンセル"
       />
     </div>
+    </AdminLayout>
   );
 };
 
