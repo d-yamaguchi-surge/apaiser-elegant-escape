@@ -11,7 +11,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminBusinessDays from "./pages/admin/AdminBusinessDays";
 import { AuthProvider } from "./hooks/useAuth";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
+import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
