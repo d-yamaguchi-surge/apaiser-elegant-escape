@@ -25,7 +25,7 @@ const Index = () => {
           href="https://sites.google.com/view/cafe-restaurant-apaiser/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white underline text-sm md:text-base break-all hover:text-white/80 transition-colors"
+          className="text-white underline text-[11px] leading-relaxed sm:text-xs md:text-sm lg:text-base break-all hover:text-white/80 transition-colors"
         >
           https://sites.google.com/view/cafe-restaurant-apaiser/
         </a>
