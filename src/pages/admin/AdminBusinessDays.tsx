@@ -662,6 +662,7 @@ const AdminBusinessDays = () => {
         cancelText="キャンセル"
       />
     </div>
+    </AdminLayout>
   );
 };
 
