@@ -190,7 +190,7 @@ const AdminBusinessDays = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <AdminLayout><LoadingSpinner /></AdminLayout>;
   }
 
   return (
